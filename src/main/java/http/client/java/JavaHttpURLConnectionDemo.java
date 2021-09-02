@@ -2,13 +2,20 @@ package http.client.java;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import http.client.model.Page;
+import http.client.model.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Iterator;
+import java.util.List;
 
 public class JavaHttpURLConnectionDemo {
+
+    protected static final Logger LOGGER = LoggerFactory.getLogger(JavaHttpURLConnectionDemo.class);
 
     public static void main(String[] args) throws IOException {
 
@@ -29,7 +36,20 @@ public class JavaHttpURLConnectionDemo {
         Page page = mapper.readValue(responseStream, Page.class);
 
         // Finally we have the response
-        System.out.println(page.getPage().toString());
+
+        List<User> users = page.getData();
+
+        Iterator i = users.iterator();
+        while (i.hasNext()) {
+            User user  = (User) i.next();
+            if (user.getCommentCount().compareTo(Integer.valueOf("10")) > 0) {
+                LOGGER.info(user.getUsername().toString() + " : " + user.getCommentCount().toString());
+            }
+        }
+
+        for (User user : users) {
+            LOGGER.info(user.getSubmissionCount().toString());
+        }
 
     }
 
