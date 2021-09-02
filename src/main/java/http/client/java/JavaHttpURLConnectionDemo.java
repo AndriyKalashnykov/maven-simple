@@ -37,18 +37,23 @@ public class JavaHttpURLConnectionDemo {
 
         // Finally we have the response
 
+        boolean printAll = false;
         List<User> users = page.getData();
+        Iterator<User> i = users.iterator();
 
-        Iterator i = users.iterator();
+        int threshold = 10;
+
         while (i.hasNext()) {
             User user  = (User) i.next();
-            if (user.getCommentCount().compareTo(Integer.valueOf("10")) > 0) {
+            if (user.getCommentCount().compareTo(Integer.valueOf(String.valueOf(threshold))) > 0) {
                 LOGGER.info(user.getUsername().toString() + " : " + user.getCommentCount().toString());
             }
         }
 
-        for (User user : users) {
-            LOGGER.info(user.getSubmissionCount().toString());
+        if (printAll) {
+            for (User user : users) {
+                LOGGER.info(user.getSubmissionCount().toString());
+            }
         }
 
     }
