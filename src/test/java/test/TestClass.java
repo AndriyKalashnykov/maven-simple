@@ -16,7 +16,6 @@ import static org.junit.Assert.assertTrue;
 
 public class TestClass {
 
-//    protected static final org.apache.logging.log4j.Logger LOGGER = LogManager.getLogger();
     protected static final Logger LOGGER = LoggerFactory.getLogger(TestClass.class);
 
     public static void scan() {
