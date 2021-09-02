@@ -25,28 +25,6 @@ public class JavaHttpClientDemo {
         asynchronousRequest();
     }
 
-    public static void printUsers(final Page page) {
-
-        boolean printAll = false;
-        List<User> users = page.getData();
-        Iterator<User> i = users.iterator();
-
-        int threshold = 10;
-
-        while (i.hasNext()) {
-            User user  = (User) i.next();
-            if (user.getCommentCount().compareTo(Integer.valueOf(String.valueOf(threshold))) > 0) {
-                LOGGER.info(user.getUsername().toString() + " : " + user.getCommentCount().toString());
-            }
-        }
-
-        if (printAll) {
-            for (User user : users) {
-                LOGGER.info(user.getSubmissionCount().toString());
-            }
-        }
-    }
-
     private static void asynchronousRequest() throws InterruptedException, ExecutionException {
 
         // create a client
@@ -67,7 +45,7 @@ public class JavaHttpClientDemo {
         var response = responseFuture.get();
 
         // the response:
-        printUsers(response.body().get());
+        response.body().get().printUsers();
     }
 
     private static void synchronousRequest() throws IOException, InterruptedException {
@@ -83,7 +61,7 @@ public class JavaHttpClientDemo {
         HttpResponse<Supplier<Page>> response = client.send(request, new JsonBodyHandler<>(Page.class));
 
         // the response:
-        printUsers(response.body().get());
+        response.body().get().printUsers();
     }
 
 }

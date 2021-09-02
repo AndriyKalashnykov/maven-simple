@@ -1,6 +1,7 @@
 package http.client.model;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
@@ -9,6 +10,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import http.client.apache.ApacheHttpClientUserDemo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -20,6 +24,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 })
 
 public class Page {
+
+    protected static final Logger LOGGER = LoggerFactory.getLogger(Page.class);
 
     @JsonProperty("page")
     public Integer page;
@@ -94,4 +100,25 @@ public class Page {
         this.additionalProperties.put(name, value);
     }
 
+    public void printUsers() {
+
+        boolean printAll = false;
+        List<User> users = this.getData();
+        Iterator<User> i = users.iterator();
+
+        int threshold = 10;
+
+        while (i.hasNext()) {
+            User user  = (User) i.next();
+            if (user.getCommentCount().compareTo(Integer.valueOf(String.valueOf(threshold))) > 0) {
+                LOGGER.info(user.getUsername().toString() + " : " + user.getCommentCount().toString());
+            }
+        }
+
+        if (printAll) {
+            for (User user : users) {
+                LOGGER.info(user.getSubmissionCount().toString());
+            }
+        }
+    }
 }
