@@ -1,6 +1,8 @@
 package test;
 
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -8,17 +10,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class TestClass {
 
-    protected static final Logger LOGGER = LogManager.getLogger();
-
+//    protected static final org.apache.logging.log4j.Logger LOGGER = LogManager.getLogger();
+    protected static final Logger LOGGER = LoggerFactory.getLogger(TestClass.class);
 
     public static void scan() {
         Scanner myObj = new Scanner(System.in);
@@ -37,7 +36,7 @@ public class TestClass {
         List<String> tokens = new ArrayList<>();
         String token = "";
 
-        LOGGER.debug("scanFile ()");
+        LOGGER.info("scanFile ()");
 
         assertTrue(scanner.hasNext());
 
@@ -53,7 +52,7 @@ public class TestClass {
         Iterator iterator = tokens.iterator();
         LOGGER.info("The ArrayList elements are:");
         while (iterator.hasNext()) {
-            LOGGER.info(iterator.next());
+            LOGGER.info(iterator.next().toString());
         }
 
         for(int i = 0; i < tokens.size(); i++)
