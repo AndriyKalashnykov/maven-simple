@@ -25,9 +25,9 @@ public class RetrofitDemo {
                 .addConverterFactory(JacksonConverterFactory.create())
                 .build();
 
-        PageClient apodClient = retrofit.create(PageClient.class);
+        PageClient pageClient = retrofit.create(PageClient.class);
 
-        CompletableFuture<Page> response = apodClient.getPage("DEMO_KEY");
+        CompletableFuture<Page> response = pageClient.getPage("DEMO_KEY");
 
         // do other stuff here while the request is in-flight
 

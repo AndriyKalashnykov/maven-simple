@@ -24,12 +24,12 @@ public class JavaHttpURLConnectionDemo {
         // This line makes the request
         InputStream responseStream = connection.getInputStream();
 
-        // Manually converting the response body InputStream to APOD using Jackson
+        // Manually converting the response body InputStream using Jackson
         ObjectMapper mapper = new ObjectMapper();
-        Page apod = mapper.readValue(responseStream, Page.class);
+        Page page = mapper.readValue(responseStream, Page.class);
 
         // Finally we have the response
-        System.out.println(apod.getPage().toString());
+        System.out.println(page.getPage().toString());
 
     }
 
