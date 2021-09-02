@@ -1,7 +1,7 @@
 package http.client.java;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import http.client.model.APOD;
+import http.client.model.Page;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,7 +13,7 @@ public class JavaHttpURLConnectionDemo {
     public static void main(String[] args) throws IOException {
 
         // Create a neat value object to hold the URL
-        URL url = new URL("https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY");
+        URL url = new URL("https://jsonmock.hackerrank.com/api/article_users?page=2");
 
         // Open a connection(?) on the URL(?) and cast the response(??)
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -26,10 +26,10 @@ public class JavaHttpURLConnectionDemo {
 
         // Manually converting the response body InputStream to APOD using Jackson
         ObjectMapper mapper = new ObjectMapper();
-        APOD apod = mapper.readValue(responseStream, APOD.class);
+        Page apod = mapper.readValue(responseStream, Page.class);
 
         // Finally we have the response
-        System.out.println(apod.title);
+        System.out.println(apod.getPage().toString());
 
     }
 

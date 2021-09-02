@@ -1,6 +1,6 @@
 package http.client.retrofit;
 
-import http.client.model.APOD;
+import http.client.model.Page;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 import retrofit2.http.GET;
@@ -12,28 +12,28 @@ import java.util.concurrent.ExecutionException;
 
 public class RetrofitDemo {
 
-    public interface APODClient {
-        @GET("/planetary/apod")
+    public interface PageClient {
+        @GET("/api/article_users?page=2")
         @Headers("accept: application/json")
-        CompletableFuture<APOD> getApod(@Query("api_key") String apiKey);
+        CompletableFuture<Page> getPage(@Query("api_key") String apiKey);
     }
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://api.nasa.gov")
+                .baseUrl("https://jsonmock.hackerrank.com")
                 .addConverterFactory(JacksonConverterFactory.create())
                 .build();
 
-        APODClient apodClient = retrofit.create(APODClient.class);
+        PageClient apodClient = retrofit.create(PageClient.class);
 
-        CompletableFuture<APOD> response = apodClient.getApod("DEMO_KEY");
+        CompletableFuture<Page> response = apodClient.getPage("DEMO_KEY");
 
         // do other stuff here while the request is in-flight
 
-        APOD apod = response.get();
+        Page page = response.get();
 
-        System.out.println(apod.title);
+        System.out.println(page.getPage().toString());
 
 
     }

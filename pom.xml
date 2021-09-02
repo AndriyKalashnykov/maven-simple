@@ -40,12 +40,12 @@
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
             <version>4.9.1</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>kotlin-stdlib</artifactId>
-                    <groupId>org.jetbrains.kotlin</groupId>
-                </exclusion>
-            </exclusions>
+<!--            <exclusions>-->
+<!--                <exclusion>-->
+<!--                    <artifactId>kotlin-stdlib</artifactId>-->
+<!--                    <groupId>org.jetbrains.kotlin</groupId>-->
+<!--                </exclusion>-->
+<!--            </exclusions>-->
         </dependency>
 
         <!-- Retrofit -->

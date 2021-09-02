@@ -1,9 +1,6 @@
 package http.client.retrofit;
 
-import http.client.model.APOD;
-import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
+import http.client.model.Page;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 import retrofit2.http.GET;
@@ -14,40 +11,25 @@ import java.util.concurrent.ExecutionException;
 
 public class RetrofitCustomClientDemo {
 
-    // note that requests in this class need an API Key, which is provided
-    // for all requests by an interceptor in the `clientWithApiKey` method.
-    public interface APODClient {
-        @GET("/planetary/apod")
+
+    public interface PageClient {
+        @GET("/api/article_users?page=2")
         @Headers("accept: application/json")
-        CompletableFuture<APOD> getApod();
+        CompletableFuture<Page> getPage();
     }
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
 
-        OkHttpClient clientWithApiKey = clientWithApiKey("DEMO_KEY");
-
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://api.nasa.gov")
+                .baseUrl("https://jsonmock.hackerrank.com")
                 .addConverterFactory(JacksonConverterFactory.create())
-                .client(clientWithApiKey)
                 .build();
 
-        APODClient apodClient = retrofit.create(APODClient.class);
+        PageClient pageClient = retrofit.create(PageClient.class);
 
-        APOD apod = apodClient.getApod().get();
+        Page page = pageClient.getPage().get();
 
-        System.out.println(apod.title);
-    }
-
-    private static OkHttpClient clientWithApiKey(String apiKey) {
-        return new OkHttpClient.Builder()
-                .addInterceptor(chain -> {
-                    Request originalRequest = chain.request();
-                    HttpUrl newUrl = originalRequest.url().newBuilder()
-                            .addQueryParameter("api_key", apiKey).build();
-                    Request request = originalRequest.newBuilder().url(newUrl).build();
-                    return chain.proceed(request);
-                }).build();
+        System.out.println(page.getPage().toString());
     }
 
 }

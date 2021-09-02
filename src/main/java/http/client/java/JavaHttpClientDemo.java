@@ -1,6 +1,6 @@
 package http.client.java;
 
-import http.client.model.APOD;
+import http.client.model.Page;
 
 import java.io.IOException;
 import java.net.URI;
@@ -24,12 +24,12 @@ public class JavaHttpClientDemo {
 
         // create a request
         var request = HttpRequest.newBuilder(
-                        URI.create("https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY"))
+                        URI.create("https://jsonmock.hackerrank.com/api/article_users?page=2"))
                 .header("accept", "application/json")
                 .build();
 
         // use the client to send the request
-        var responseFuture = client.sendAsync(request, new JsonBodyHandler<>(APOD.class));
+        var responseFuture = client.sendAsync(request, new JsonBodyHandler<>(Page.class));
 
         // We can do other things here while the request is in-flight
 
@@ -37,7 +37,7 @@ public class JavaHttpClientDemo {
         var response = responseFuture.get();
 
         // the response:
-        System.out.println(response.body().get().title);
+        System.out.println(response.body().get().getPage().toString());
     }
 
     private static void synchronousRequest() throws IOException, InterruptedException {
@@ -46,14 +46,14 @@ public class JavaHttpClientDemo {
 
         // create a request
         var request = HttpRequest.newBuilder(
-                URI.create("https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY")
+                URI.create("https://jsonmock.hackerrank.com/api/article_users?page=2")
         ).build();
 
         // use the client to send the request
-        HttpResponse<Supplier<APOD>> response = client.send(request, new JsonBodyHandler<>(APOD.class));
+        HttpResponse<Supplier<Page>> response = client.send(request, new JsonBodyHandler<>(Page.class));
 
         // the response:
-        System.out.println(response.body().get().title);
+        System.out.println(response.body().get().getPage().toString());
     }
 
 }
