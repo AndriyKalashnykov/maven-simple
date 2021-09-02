@@ -23,10 +23,10 @@ public class TestClass {
         String userName;
 
         // Enter username and press Enter
-        System.out.println("Enter username");
+        LOGGER.info("Enter username");
         userName = myObj.nextLine();
 
-        System.out.println("Username is: " + userName);
+        LOGGER.info("Username is: " + userName);
     }
 
     public static void scanFile(final String fileName) throws FileNotFoundException {
@@ -46,7 +46,7 @@ public class TestClass {
 
         scanner.close();
 
-        tokens.stream().forEach(S -> System.out.println(S));
+        tokens.stream().forEach(S -> LOGGER.info(S));
 
         Iterator iterator = tokens.iterator();
         LOGGER.info("The ArrayList elements are:");

@@ -22,10 +22,10 @@ public class ApacheHttpClientUserDemo {
 
             HttpGet request = new HttpGet("https://jsonmock.hackerrank.com/api/article_users?page=2");
 
-            Page response = client.execute(request, httpResponse ->
+            Page page = client.execute(request, httpResponse ->
                     mapper.readValue(httpResponse.getEntity().getContent(), Page.class));
 
-            LOGGER.info(response.page.toString());
+            page.printUsers();
         }
 
     }

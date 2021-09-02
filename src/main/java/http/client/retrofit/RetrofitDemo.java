@@ -1,6 +1,8 @@
 package http.client.retrofit;
 
 import http.client.model.Page;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 import retrofit2.http.GET;
@@ -11,6 +13,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 public class RetrofitDemo {
+
+    protected static final Logger LOGGER = LoggerFactory.getLogger(RetrofitDemo.class);
 
     public interface PageClient {
         @GET("/api/article_users?page=2")
@@ -33,8 +37,7 @@ public class RetrofitDemo {
 
         Page page = response.get();
 
-        System.out.println(page.getPage().toString());
-
+        page.printUsers();
 
     }
 
