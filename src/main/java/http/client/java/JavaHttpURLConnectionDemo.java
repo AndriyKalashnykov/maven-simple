@@ -2,7 +2,6 @@ package http.client.java;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import http.client.model.Page;
-import http.client.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,8 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Iterator;
-import java.util.List;
 
 public class JavaHttpURLConnectionDemo {
 
