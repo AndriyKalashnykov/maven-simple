@@ -28,7 +28,7 @@ public class OkHttpDemo {
 
         Page page = mapper.readValue(response.body().byteStream(), Page.class);
 
-        LOGGER.info(page.getPage().toString());
+        page.printUsers();
 
     }
 
