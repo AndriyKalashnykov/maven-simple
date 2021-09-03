@@ -38,11 +38,12 @@
         </dependency>
 
         <!-- Retrofit -->
-        <!--  https://stackoverflow.com/a/61259233/3306694 -->
+
         <dependency>
             <groupId>com.squareup.retrofit2</groupId>
             <artifactId>retrofit</artifactId>
             <!-- upgrade to Java 14 if you want to use higher version of retrofit-->
+            <!--  https://stackoverflow.com/a/61259233/3306694 -->
             <version>2.7.2</version>
             <exclusions>
                 <exclusion>
