@@ -13,6 +13,6 @@ public class JsonPathExampleTest {
     @Test
     public void mainTest() throws IOException {
 
-        JsonPathExample.main(new String[] {});
+        JsonPathExample.main(new String[]{});
     }
 }

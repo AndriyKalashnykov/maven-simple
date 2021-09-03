@@ -54,22 +54,19 @@ public class TestClass {
             LOGGER.info(iterator.next().toString());
         }
 
-        for(int i = 0; i < tokens.size(); i++)
-        {
+        for (int i = 0; i < tokens.size(); i++) {
             LOGGER.info(tokens.get(i));
         }
 
         int index = 0;
-        while (tokens.size() > index)
-        {
+        while (tokens.size() > index) {
             LOGGER.info(tokens.get(index++));
         }
 
-        for(String name : tokens)
-        {
+        for (String name : tokens) {
             LOGGER.info(name);
         }
-        tokens.forEach(tkn ->  LOGGER.info(tkn));
+        tokens.forEach(tkn -> LOGGER.info(tkn));
     }
 
     @Test

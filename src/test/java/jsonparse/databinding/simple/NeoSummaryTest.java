@@ -13,6 +13,6 @@ public class NeoSummaryTest {
     @Test
     public void mainTest() throws IOException {
 
-        NeoSummary.main(new String[] {});
+        NeoSummary.main(new String[]{});
     }
 }

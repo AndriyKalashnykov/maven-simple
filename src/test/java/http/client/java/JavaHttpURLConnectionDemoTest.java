@@ -13,6 +13,6 @@ public class JavaHttpURLConnectionDemoTest {
     @Test
     public void mainTest() throws IOException {
 
-        JavaHttpURLConnectionDemo.main(new String[] {});
+        JavaHttpURLConnectionDemo.main(new String[]{});
     }
 }

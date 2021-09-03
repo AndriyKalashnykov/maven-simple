@@ -14,6 +14,6 @@ public class OkHttpDemoTest {
     @Test
     public void mainTest() throws IOException {
 
-        OkHttpDemo.main(new String[] {});
+        OkHttpDemo.main(new String[]{});
     }
 }

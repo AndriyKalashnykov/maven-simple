@@ -14,6 +14,6 @@ public class JavaHttpClientDemoTest {
     @Test
     public void mainTest() throws IOException, ExecutionException, InterruptedException {
 
-        JavaHttpClientDemo.main(new String[] {});
+        JavaHttpClientDemo.main(new String[]{});
     }
 }

@@ -13,6 +13,6 @@ public class JacksonTreeModelTest {
     @Test
     public void mainTest() throws IOException {
 
-        JacksonTreeModel.main(new String[] {});
+        JacksonTreeModel.main(new String[]{});
     }
 }

@@ -14,6 +14,6 @@ public class RetrofitCustomClientDemoTest {
     @Test
     public void mainTest() throws ExecutionException, InterruptedException {
 
-        RetrofitCustomClientDemo.main(new String[] {});
+        RetrofitCustomClientDemo.main(new String[]{});
     }
 }

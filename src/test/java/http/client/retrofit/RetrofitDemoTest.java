@@ -13,6 +13,6 @@ public class RetrofitDemoTest {
     @Test
     public void mainTest() throws ExecutionException, InterruptedException {
 
-        RetrofitDemo.main(new String[] {});
+        RetrofitDemo.main(new String[]{});
     }
 }

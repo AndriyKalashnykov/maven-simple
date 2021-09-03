@@ -13,6 +13,6 @@ public class ApacheHttpClientUserDemoTest {
     @Test
     public void mainTest() throws IOException {
 
-        ApacheHttpClientUserDemo.main(new String[] {});
+        ApacheHttpClientUserDemo.main(new String[]{});
     }
 }

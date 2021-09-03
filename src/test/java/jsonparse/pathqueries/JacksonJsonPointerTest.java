@@ -13,6 +13,6 @@ public class JacksonJsonPointerTest {
     @Test
     public void mainTest() throws IOException {
 
-        JacksonJsonPointer.main(new String[] {});
+        JacksonJsonPointer.main(new String[]{});
     }
 }

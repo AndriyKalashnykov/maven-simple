@@ -13,6 +13,6 @@ public class ComplexDataBindingJacksonTest {
     @Test
     public void mainTest() throws JsonProcessingException {
 
-        ComplexDataBindingJackson.main(new String[] {});
+        ComplexDataBindingJackson.main(new String[]{});
     }
 }
