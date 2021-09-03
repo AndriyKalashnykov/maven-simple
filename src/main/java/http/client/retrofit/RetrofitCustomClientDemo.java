@@ -1,6 +1,5 @@
 package http.client.retrofit;
 
-import http.client.java.JavaHttpURLConnectionDemo;
 import http.client.model.Page;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
