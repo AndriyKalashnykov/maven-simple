@@ -2,6 +2,7 @@
 maven-simple
 
 This [repo](https://github.com/AndriKalashnykov/maven-simple/tree/main/src/main/java/http.client) has example code for a few HTTP clients in Java.
+
 CORE JAVA:
 * HttpURLConnection
 * HttpClient
