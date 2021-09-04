@@ -3,6 +3,10 @@
 
 .idea/*
 target/*
+.classpath
+.project
+.settings
+.vscode
 
 # Log file
 *.log
