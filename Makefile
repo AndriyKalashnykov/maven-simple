@@ -1,15 +1,15 @@
 .DEFAULT_GOAL := help
 
-SHELL  				:= /bin/bash
-SDKMAN				:= $(HOME)/.sdkman/bin/sdkman-init.sh
-CURRENT_USER_NAME	:= $(shell whoami)
+SHELL := /bin/bash
+SDKMAN := $(HOME)/.sdkman/bin/sdkman-init.sh
+CURRENT_USER_NAME := $(shell whoami)
 
-JAVA_VER 		:= 	11.0.11.hs-adpt
-MAVEN_VER		:= 	3.8.2
+JAVA_VER := 11.0.11.hs-adpt
+MAVEN_VER := 3.8.2
 
 build-deps-check:
 	@source $(SDKMAN)
-SDKMAN_EXISTS	:= @printf "sdkman"
+SDKMAN_EXISTS := @printf "sdkman"
 ifndef SDKMAN_VERSION
 	SDKMAN_EXISTS := @echo "SDKMAN_VERSION is undefined" && exit 1
 endif
@@ -28,7 +28,7 @@ ifeq ($(strip $(MAVEN_WHICH)),)
 	JAVA_EXISTS := @echo "ERROR: mvn not found." && exit 1
 endif
 
-build-deps-install: check-env
+build-deps-install:
 	@source $(SDKMAN) && echo N | sdk install java $(JAVA_VER)
 	@source $(SDKMAN) && echo N | sdk install maven $(MAVEN_VER)
 	@source $(SDKMAN) && sdk use java $(JAVA_VER) && sdk use maven $(MAVEN_VER)
@@ -40,10 +40,10 @@ help:
 	@echo
 	@echo "Commands :"
 	@echo
-	@grep -E '[a-zA-Z\.\-]+:.*?@ .*$$' $(MAKEFILE_LIST)| tr -d '#' | awk 'BEGIN {FS = ":.*?@ "}; {printf "\033[32m%-18s\033[0m - %s\n", $$1, $$2}'
+	@grep -E '[a-zA-Z\.\-]+:.*?@ .*$$' $(MAKEFILE_LIST)| tr -d '#' | awk 'BEGIN {FS = ":.*?@ "}; {printf "\033[32m%-9s\033[0m - %s\n", $$1, $$2}'
 
 #check-env: @ Check environment variables and installed tools
-check-env: build-deps-check
+check-env: build-deps-check build-deps-install
 
 	@printf "\xE2\x9C\x94 "
 	$(SDKMAN_EXISTS)
