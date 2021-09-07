@@ -4,11 +4,10 @@ SHELL  				:= /bin/bash
 SDKMAN				:= $(HOME)/.sdkman/bin/sdkman-init.sh
 CURRENT_USER_NAME	:= $(shell whoami)
 
-JAVA_VERSION 		:= 	11.0.11.hs-adpt
-MAVEN_VERSION		:= 	3.8.1
+JAVA_VER 		:= 	11.0.11.hs-adpt
+MAVEN_VER		:= 	3.8.2
 
 build-deps-check:
-	@echo "User: $(CURRENT_USER_NAME)"
 	@source $(SDKMAN)
 SDKMAN_EXISTS	:= @printf "sdkman"
 ifndef SDKMAN_VERSION
@@ -28,6 +27,11 @@ MAVEN_WHICH	:= $(shell which mvn)
 ifeq ($(strip $(MAVEN_WHICH)),)
 	JAVA_EXISTS := @echo "ERROR: mvn not found." && exit 1
 endif
+
+build-deps-install: check-env
+	@source $(SDKMAN) && echo N | sdk install java $(JAVA_VER)
+	@source $(SDKMAN) && echo N | sdk install maven $(MAVEN_VER)
+	@source $(SDKMAN) && sdk use java $(JAVA_VER) && sdk use maven $(MAVEN_VER)
 
 #help: @ List available tasks on this project
 help:
@@ -50,5 +54,9 @@ check-env: build-deps-check
 	@printf "\n"
 
 #build: @ Build project
-build:
-	@
+build: check-env
+	@source $(SDKMAN) && sdk use java $(JAVA_VER) && sdk use maven $(MAVEN_VER) && mvn clean package install -Dmaven.test.skip=true
+
+#test: @ Run project tests
+test: build
+	@source $(SDKMAN) && sdk use java $(JAVA_VER) && sdk use maven $(MAVEN_VER) && mvn test
