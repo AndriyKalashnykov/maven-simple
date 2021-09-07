@@ -7,6 +7,8 @@ CURRENT_USER_NAME := $(shell whoami)
 JAVA_VER := 11.0.11.hs-adpt
 MAVEN_VER := 3.8.2
 
+SDKMAN_EXISTS := @printf "sdkman"
+
 #help: @ List available tasks on this project
 help:
 	@clear
@@ -18,7 +20,6 @@ help:
 
 build-deps-check:
 	@source $(SDKMAN)
-SDKMAN_EXISTS := @printf "sdkman"
 ifndef SDKMAN_VERSION
 	@curl -s "https://get.sdkman.io?rcupdate=false" | bash
 	@source $(SDKMAN)
