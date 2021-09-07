@@ -1,7 +1,10 @@
 # maven-simple
-maven-simple
 
-This [package](https://github.com/AndriyKalashnykov/maven-simple/tree/main/src/main/java/http/client) has example code for a few HTTP clients in Java.
+Maven based Java project for general purpose testing.
+Utilizes [`Makefile`](./Makefile) and [Sdkman!](https://sdkman.io/) to install 
+and configure `JDK` and `Maven`
+
+**This [package](https://github.com/AndriyKalashnykov/maven-simple/tree/main/src/main/java/http/client) has example code** for a few HTTP clients in Java.
 
 CORE JAVA:
 * HttpURLConnection
