@@ -26,8 +26,8 @@ LATEST_SDKMAN_JAVA_VER=$(sdk ls java | grep .hs-adpt | grep 11. -m1 | cut -c 62-
 
 # sdk list maven | grep 3. | head -n 1
 
-JAVA_VER=${1:-$LATEST_SDKMAN_JAVA_VER}
-MAVEN_VER=${2:-3.8.2}
+JAVA_VER=${1:-$LATEST_SDKMAN_JAVA_VER} # "default"
+MAVEN_VER=${2:-3.8.2} # "latest"
 SET_JAVA_VER_DEFAULT=${3:-no}
 SET_MAVEN_VER_DEFAULT=${4:-no}
 
@@ -126,6 +126,7 @@ sdk_install() {
 }
 
 #sdk_install maven ${MAVEN_VER} '\s\s' '\s\s' '^[0-9]+\.[0-9]+\.[0-9]+$'
+#sdk_install java ${JAVA_VERSION} "\\s*" "(\\.[a-z0-9]+)?-adpt\\s*" ".*-[a-z]+$"
 
 #versions_to_delete=$(sdk list java | grep "local only" | cut -c 62-)
 #java_versions_to_install=$(sdk list java | grep -v "local only" | grep "hs-adpt" | grep -v "sdk install" | grep -v "installed" | cut -c 62-)
