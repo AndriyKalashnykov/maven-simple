@@ -6,7 +6,7 @@ LAUNCH_DIR=$(pwd); SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; c
 
 cd $SCRIPT_DIR
 
-# Install java/maven through sdkman
+# Install java/maven with sdkman
 # ./install.sh 11.0.11.hs-adpt 3.8.2 no no
 
 JAVA_VER=${1:-11.0.11.hs-adpt}
