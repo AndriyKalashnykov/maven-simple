@@ -57,7 +57,7 @@ if [ "$SET_JAVA_VER_DEFAULT" == "yes" ]; then
 fi
 
 # install $MAVEN_VER if not installed
-if [ "$(sdk list maven | grep -v "local only" | grep "$MAVEN_VER" | grep -v "*" | wc -l)" == "1" ]; then
+if [ "$(sdk list maven | grep -v "local only" | grep "$MAVEN_VER" | grep -v "*" | grep -v "+" | wc -l)" == "1" ]; then
   echo $SET_MAVEN_VER_DEFAULT | sdk install maven $MAVEN_VER
 fi
 
