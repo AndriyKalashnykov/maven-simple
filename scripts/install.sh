@@ -124,18 +124,18 @@ sdk_install() {
     fi
 
 #    echo ${version_list}
-    echo  ${install_type} ${requested_version}
+    echo  "${install_type}" "${requested_version}"
 #    . "${SDKMAN_DIR}/bin/sdkman-init.sh && sdk install ${install_type} ${requested_version} && sdk flush archives && sdk flush temp"
 }
 
 if [ "$MAVEN_VER" == "latest" ]; then
-  sdk_install maven $MAVEN_VER "\s*\s" "\s*\s" "^[0-9]+\.[0-9]+\.[0-9]+$"
+  sdk_install maven "$MAVEN_VER" "\s*\s" "\s*\s" "^[0-9]+\.[0-9]+\.[0-9]+$"
 else
-  sdk_install maven  $MAVEN_VER '\s*\s' '\s*\s' '^[0-9]+\.[0-9]+\.[0-9]+$'
+  sdk_install maven  "$MAVEN_VER" '\s*\s' '\s*\s' '^[0-9]+\.[0-9]+\.[0-9]+$'
 fi
 
 if [ "$JAVA_VER" == "latest" ]; then
-  sdk_install java $JAVA_VER "\s${JAVA_VER_MAJOR}*\s" "(\\.[a-z0-9]+)?${JAVA_VER_DIST}\\s*" ".*-[a-z]+$"
+  sdk_install java "$JAVA_VER" "\s${JAVA_VER_MAJOR}*\s" "(\\.[a-z0-9]+)?${JAVA_VER_DIST}\\s*" ".*-[a-z]+$"
 fi
 
 #sdk list maven | grep -oP "\s*\s\K[0-9]+\.[0-9]+\.[0-9]+\s*\s" | tr -d ' ' | sort -rV
