@@ -66,7 +66,8 @@ sdk_install() {
         echo "install_type: ${install_type} requested_version: ${requested_version}"
     else
 #        local regex="${prefix}\\K[0-9]+\\.[0-9]+\\.[0-9]+${suffix}"
-        local regex="${prefix}\\K([0-9a-zA-Z]+\.)?([0-9a-zA-Z\\-]+\.)?([0-9a-zA-Z\\-]+)${suffix}"
+#        local regex="${prefix}\\K([0-9a-zA-Z]+\.)?([0-9a-zA-Z\\-]+\.)?([0-9a-zA-Z\\-]+)${suffix}"
+        local regex="${prefix}\\K(([0-9a-zA-Z]+\.)?([0-9a-zA-Z\-]+\.)?([0-9a-zA-Z\-]+)[\w.-]*\d)${suffix}"
         echo $regex
 
         local version_list="$(. ${SDKMAN_DIR}/bin/sdkman-init.sh && sdk list ${install_type} 2>&1 | grep -oP "${regex}" | tr -d ' ' | sort -rV)"
@@ -84,6 +85,8 @@ sdk_install() {
             exit 1
         fi
     fi
+
+    echo $requested_version
 
 #if [ "${install_type}" == "java" ]; then
 #      # install java
@@ -125,13 +128,22 @@ sdk_install() {
 #fi
 }
 
-#sdk list gradle | grep -E "([0-9a-zA-Z]+\.)?([0-9a-zA-Z\\-]+\.)?([0-9a-zA-Z\\-]+)"
+
+
+
+#vl=$(grep -oP "(([0-9a-zA-Z]+\.)?([0-9a-zA-Z\-]+\.)?([0-9a-zA-Z\-]+)[\w.-]*\d)" $SCRIPT_DIR/gradle | tr -d ' ' | sort -rV)
+#echo $vl
+#vl2=$(echo $vl | grep -oP "([\w.-]*\d)")
+#echo $vl2
+
+#rv=$($vl | grep -E -m 1 "^${requested_version//./\\.}([\\.\\s]|$)")
+#echo $rv
 
 #\s*\s/([0-9a-zA-Z]+\.)?([0-9a-zA-Z\\-]+\.)?([0-9a-zA-Z\\-]+)\s*\s
 
-sdk_install java "$JAVA_VER" "\s${JAVA_VER_MAJOR}*\s" "(\\.[a-z0-9]+)?${JAVA_VER_DIST}\\s*" ".*-[a-z]+$"
-sdk_install maven "$MAVEN_VER" "\s\s" "\s\s" "^[0-9]+\.[0-9]+\.[0-9]+$"
-sdk_install gradle "latest" "\s\s" "\s\s" "[0-9a-zA-Z]+\.)?([0-9a-zA-Z\\-]+\.)?([0-9a-zA-Z\\-]+$"
+#sdk_install java "$JAVA_VER" "\s${JAVA_VER_MAJOR}*\s" "(\\.[a-z0-9]+)?${JAVA_VER_DIST}\\s*"
+sdk_install maven "$MAVEN_VER" "\s3.*\s" ""
+#sdk_install gradle "latest" "\s\s" "\s\s"
 
 #sdk list maven | grep -oP "\s*\s\K[0-9]+\.[0-9]+\.[0-9]+\s*\s" | tr -d ' ' | sort -rV
 
