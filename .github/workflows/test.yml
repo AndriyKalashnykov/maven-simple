@@ -25,11 +25,16 @@ jobs:
         distribution: 'adopt'
  
     - name: Cache Maven packages
-      uses: actions/cache@v2
+      uses: actions/cache@v2.1.4
+      env:
+        cache-name: cache-mvn
       with:
-        path: ~/.m2
-        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-build-${{ env.cache-name }}-
+          ${{ runner.os }}-build-
+          ${{ runner.os }}-
       
     - name: Test with Maven
       run: mvn -B test --file pom.xml
