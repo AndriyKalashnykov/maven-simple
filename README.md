@@ -1,5 +1,5 @@
 [![test](https://github.com/AndriyKalashnykov/maven-simple/actions/workflows/test.yml/badge.svg)](https://github.com/AndriyKalashnykov/maven-simple/actions/workflows/test.yml)
-# Maven based Java project for general purpose testing.</br>
+# Maven based Java project for general purpose testing</br>
 
 Utilizes [`Makefile`](./Makefile) and [Sdkman!](https://sdkman.io/) to install and configure `JDK` and `Maven`
 
