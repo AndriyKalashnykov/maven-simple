@@ -4,8 +4,8 @@ SHELL := /bin/bash
 SDKMAN := $(HOME)/.sdkman/bin/sdkman-init.sh
 CURRENT_USER_NAME := $(shell whoami)
 
-JAVA_VER := 11.0.11.hs-adpt
-MAVEN_VER := 3.8.2
+JAVA_VER := 17.0.1.12.1-amzn
+MAVEN_VER := 3.8.4
 
 SDKMAN_EXISTS := @printf "sdkman"
 
