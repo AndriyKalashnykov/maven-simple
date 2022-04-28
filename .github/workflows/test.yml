@@ -21,13 +21,13 @@ jobs:
     - name: Set up JDK
       uses: actions/setup-java@main
       with:
-        java-version: 17
+        java-version: 18
         distribution: 'temurin'
  
     - name: Cache Maven packages
       uses: actions/cache@main
       env:
-        cache-name: cache-mvn-temurin-17
+        cache-name: cache-mvn-temurin-18
       with:
         path: ~/.m2/repository
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/pom.xml') }}
