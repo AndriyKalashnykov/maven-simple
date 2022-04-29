@@ -26,14 +26,14 @@
 
 **This [package](https://github.com/AndriyKalashnykov/maven-simple/tree/main/src/main/java/http/client) has example code** for a few HTTP clients in Java
 
-CORE JAVA:
+Core Java:
 * [HttpURLConnection](https://www.javatpoint.com/java-http-url-connection)
-* HttpClient
+* [HttpClient](https://openjdk.java.net/groups/net/httpclient/intro.html)
 
-POPULAR LIBRARIES:
-* ApacheHttpClient
-* OkHttp
-* Retrofit
+Popular Libraries:
+* [ApacheHttpClient](https://mkyong.com/java/apache-httpclient-examples/)
+* [OkHttp](https://www.baeldung.com/guide-to-okhttp)
+* [Retrofit](https://www.baeldung.com/retrofit)
 
 This [package](https://github.com/AndriyKalashnykov/maven-simple/tree/main/src/main/java/jsonparse/) contains examples 
 of how to work with JSON in Java using 
