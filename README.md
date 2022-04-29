@@ -24,7 +24,7 @@
 - [`GNU Make`](https://www.gnu.org/software/make/)
 
 
-**This [package](https://github.com/AndriyKalashnykov/maven-simple/tree/main/src/main/java/http/client) has example code** for a few HTTP clients in Java
+## [HTTP clients in Java](https://github.com/AndriyKalashnykov/maven-simple/tree/main/src/main/java/http/client)
 
 Core Java:
 * [HttpURLConnection](https://www.javatpoint.com/java-http-url-connection)
@@ -35,8 +35,8 @@ Popular Libraries:
 * [OkHttp](https://www.baeldung.com/guide-to-okhttp)
 * [Retrofit](https://www.baeldung.com/retrofit)
 
-This [package](https://github.com/AndriyKalashnykov/maven-simple/tree/main/src/main/java/jsonparse/) contains examples 
-of how to work with JSON in Java using 
+## [JSON in Java](https://github.com/AndriyKalashnykov/maven-simple/tree/main/src/main/java/jsonparse/) 
+of how to work with  using 
 * [Jackson](https://github.com/FasterXML/jackson) 
 * [Gson](https://github.com/google/gson)
 
