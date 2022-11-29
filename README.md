@@ -7,19 +7,19 @@
 
 - [sdkman](https://sdkman.io/install)
 
-    Install and use JDK 18
+    Install and use JDK 19
 
     ```bash
-    sdk install java 18.0.1-tem
-    sdk use java 18.0.1-tem
+    sdk install java 19-tem
+    sdk use java 19-tem
     ```
 - [Apache Maven](https://maven.apache.org/install.html)
 
-    Install Apache Maven 3.8.5
+    Install Apache Maven 3.8.6
 
     ```bash
-    sdk install maven 3.8.5
-    sdk use maven 3.8.5
+    sdk install maven 3.8.6
+    sdk use maven 3.8.6
     ```
 - [`GNU Make`](https://www.gnu.org/software/make/)
 
