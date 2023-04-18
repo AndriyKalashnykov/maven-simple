@@ -15,11 +15,11 @@
     ```
 - [Apache Maven](https://maven.apache.org/install.html)
 
-    Install Apache Maven 3.8.6
+    Install Apache Maven 3.9.1
 
     ```bash
-    sdk install maven 3.8.6
-    sdk use maven 3.8.6
+    sdk install maven 3.9.1
+    sdk use maven 3.9.1
     ```
 - [`GNU Make`](https://www.gnu.org/software/make/)
 
