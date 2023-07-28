@@ -20,10 +20,10 @@ help:
 
 build-deps-check:
 	@. $(SDKMAN)
-ifndef SDKMAN_VERSION
+ifndef SDKMAN_DIR
 	@curl -s "https://get.sdkman.io?rcupdate=false" | bash
 	@source $(SDKMAN)
-	ifndef SDKMAN_VERSION
+	ifndef SDKMAN_DIR
 		SDKMAN_EXISTS := @echo "SDKMAN_VERSION is undefined" && exit 1
 	endif
 endif
