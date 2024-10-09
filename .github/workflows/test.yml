@@ -25,7 +25,7 @@ jobs:
         distribution: 'temurin'
  
     - name: Cache Maven packages
-      uses: actions/cache@v4.1.0
+      uses: actions/cache@v4.1.1
       env:
         cache-name: cache-mvn-temu-19
       with:
