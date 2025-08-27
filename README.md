@@ -7,11 +7,11 @@
 
 - [sdkman](https://sdkman.io/install)
 
-    Install and use JDK 19
+    Install and use JDK 21
 
     ```bash
-    sdk install java 19-tem
-    sdk use java 19-tem
+    sdk install java 21-tem
+    sdk use java 21-tem
     ```
 - [Apache Maven](https://maven.apache.org/install.html)
 
