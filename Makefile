@@ -48,4 +48,4 @@ test: build
 
 #dep-check: @ Run dependencies check - publicly disclosed vulnerabilities in application dependencies
 dep-check:
-	@mvn org.owasp:dependency-check-maven:12.1.3:check # -DnvdApiKey=
+	@mvn dependency-check:check # -DnvdApiKey=
