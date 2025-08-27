@@ -33,8 +33,6 @@ jobs:
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
           ${{ runner.os }}-build-${{ env.cache-name }}-
-          ${{ runner.os }}-build-
-          ${{ runner.os }}-
       
     - name: Test with Maven
       run: mvn -B test --file pom.xml
