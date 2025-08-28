@@ -29,6 +29,14 @@
     </repositories>
 
     <dependencies>
+
+<!--        Example of CVE-2025-4892 -->
+<!--        <dependency>-->
+<!--            <groupId>org.apache.commons</groupId>-->
+<!--            <artifactId>commons-lang3</artifactId>-->
+<!--            <version>3.1</version>-->
+<!--        </dependency>-->
+
         <!-- Apache Http Components HttpClient -->
         <dependency>
             <groupId>org.apache.httpcomponents.client5</groupId>
