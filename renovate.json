@@ -6,9 +6,14 @@
     ":label(dependencies)",
     ":semanticCommitType(chore)",
     "docker:pinDigests",
-    "helpers:pinGitHubActionDigests"
+    "helpers:pinGitHubActionDigests",
+    ":dependencyDashboard",
+    "schedule:daily"
   ],
   "prConcurrentLimit": 2,
+  "platformAutomerge": true,
+  "commitMessagePrefix": "chore(all): ",
+  "commitMessageAction": "update",
   "packageRules": [
     {
       "groupName": "Apache commons",
