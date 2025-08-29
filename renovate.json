@@ -16,6 +16,14 @@
   "commitMessageAction": "update",
   "packageRules": [
     {
+      "matchCategories": [
+        "java"
+      ],
+      "addLabels": [
+        "lang: java"
+      ]
+    },
+    {
       "groupName": "Apache commons",
       "description": "All apache commons grouped into one PR",
       "matchPackageNames": [
@@ -38,7 +46,9 @@
       "matchManagers": [
         "github-actions"
       ],
-      "extends": ["schedule:monthly"],
+      "extends": [
+        "schedule:monthly"
+      ],
       "automerge": true
     }
   ],
@@ -46,17 +56,14 @@
     "automerge",
     "dependencies"
   ],
-   "java":{
-    "addLabels": ["lang: java"]
-  },
   "dependencyDashboard": true,
-   "dependencyDashboardLabels": [
+  "dependencyDashboardLabels": [
     "type: process"
   ],
-  "vulnerabilityAlerts":{
-     "labels":[
-       "type:security" 
-     ],
-     "stabilityDays" : 0
+  "vulnerabilityAlerts": {
+    "labels": [
+      "type:security"
+    ],
+    "minimumReleaseAge": null
   }
 }
