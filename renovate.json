@@ -8,14 +8,32 @@
     "docker:pinDigests",
     "helpers:pinGitHubActionDigests",
     ":dependencyDashboard",
-    "schedule:daily"
+    "schedule:daily",
+    ":automergePatch",
+    ":automergePr",
+    ":automergeRequireAllStatusChecks",
+    ":prConcurrentLimitNone",
+    ":separatePatchReleases"
+  ],
+  "enabledManagers": [
+    "maven",
+    "github-actions"
   ],
   "prConcurrentLimit": 2,
   "platformAutomerge": true,
   "commitMessagePrefix": "chore(all): ",
   "commitMessageAction": "update",
+  "commitBody": "Signed-off-by: Renovate Bot <bot@renovateapp.com>",
   "packageRules": [
     {
+      "description": "Automerge non-major updates",
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": true,
       "matchCategories": [
         "java"
       ],
@@ -47,7 +65,7 @@
         "github-actions"
       ],
       "extends": [
-        "schedule:monthly"
+        "schedule:daily"
       ],
       "automerge": true
     }
