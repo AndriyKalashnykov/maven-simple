@@ -37,11 +37,21 @@
       "automerge": true
     }
   ],
-    "labels": [
-    "automerge"
+  "labels": [
+    "automerge",
+    "dependencies"
   ],
+   "java":{
+    "addLabels": ["lang: java"]
+  },
   "dependencyDashboard": true,
    "dependencyDashboardLabels": [
     "type: process"
-  ]
+  ],
+  "vulnerabilityAlerts":{
+     "labels":[
+       "type:security" 
+     ],
+     "stabilityDays" : 0
+  }
 }
