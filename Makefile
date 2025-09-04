@@ -44,11 +44,11 @@ clean:
 
 #test: @ Run project tests
 test: build
-	@. $(SDKMAN) && sdk use java $(JAVA_VER) && sdk use maven $(MAVEN_VER) && mvn test
+	@. mvn test
 
 #build: @ Build project
 build:
-	@. $(SDKMAN) && sdk use java $(JAVA_VER) && sdk use maven $(MAVEN_VER) && mvn clean package install -Dmaven.test.skip=true
+	@ mvn package -Dmaven.test.skip=true
 
 # mvn org.owasp:dependency-check-maven:12.1.3:check -DnvdApiKey=${NVD_API_KEY}
 #cve-check: @ Run dependencies check for publicly disclosed vulnerabilities in application dependencies
