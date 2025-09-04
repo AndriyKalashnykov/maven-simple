@@ -16,7 +16,7 @@ help:
 	@echo
 	@echo "Commands :"
 	@echo
-	@grep -E '[a-zA-Z\.\-]+:.*?@ .*$$' $(MAKEFILE_LIST)| tr -d '#' | awk 'BEGIN {FS = ":.*?@ "}; {printf "\033[32m%-10s\033[0m - %s\n", $$1, $$2}'
+	@grep -E '[a-zA-Z\.\-]+:.*?@ .*$$' $(MAKEFILE_LIST)| tr -d '#' | awk 'BEGIN {FS = ":.*?@ "}; {printf "\033[32m%-13s\033[0m - %s\n", $$1, $$2}'
 
 build-deps-check:
 	@. $(SDKMAN)
@@ -47,8 +47,8 @@ test: build
 	@. $(SDKMAN) && sdk use java $(JAVA_VER) && sdk use maven $(MAVEN_VER) && mvn test
 
 # mvn org.owasp:dependency-check-maven:12.1.3:check -DnvdApiKey=${NVD_API_KEY}
-#dep-check: @ Run dependencies check - publicly disclosed vulnerabilities in application dependencies
-dep-check:
+#cve-dep-check: @ Run dependencies check - publicly disclosed vulnerabilities in application dependencies
+cve-dep-check:
 	@mvn dependency-check:check # -DnvdApiKey==${NVD_API_KEY}
 
 #j-generate: @ Generate Jacoco report
