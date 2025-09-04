@@ -51,7 +51,7 @@ test: build
 cve-dep-check:
 	@mvn dependency-check:check # -DnvdApiKey==${NVD_API_KEY}
 
-#j-generate: @ Generate Jacoco report
+#j-generate: @ Generate code coverage report
 j-generate:
 	@ mvn jacoco:report
 
@@ -59,7 +59,7 @@ j-generate:
 j-check:
 	@ mvn jacoco:check
 
-#j-open: @ Open Jacoco report
+#j-open: @ Open code coverage report
 j-open:
 	@ xdg-open target/site/jacoco/index.html
 

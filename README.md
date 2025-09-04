@@ -68,7 +68,7 @@ check-env     - Check environment variables and installed tools
 build         - Build project
 test          - Run project tests
 cve-dep-check - Run dependencies check - publicly disclosed vulnerabilities in application dependencies
-j-generate    - Generate Jacoco report
+j-generate    - Generate code coverage report
 j-check       - Check if coverage meets the 70% threshold
-j-open        - Open Jacoco report
+j-open        - Open code coverage report
 ```
