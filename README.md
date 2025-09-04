@@ -63,12 +63,13 @@ Usage: make COMMAND
 
 Commands :
 
-help          - List available tasks on this project
-check-env     - Check installed tools
-build         - Build project
-test          - Run project tests
-cve-dep-check - Run dependencies check - publicly disclosed vulnerabilities in application dependencies
-j-generate    - Generate code coverage report
-j-check       - Check if coverage meets the 70% threshold
-j-open        - Open code coverage report
+help              - List available tasks on this project
+check-env         - Check installed tools
+clean             - Cleanup
+test              - Run project tests
+build             - Build project
+cve-check         - Run dependencies check for publicly disclosed vulnerabilities in application dependencies
+coverage-generate - Generate code coverage report
+coverage-check    - Verify code coverage meets minimum threshold ( > 70%)
+coverage-open     - Open code coverage report
 ```

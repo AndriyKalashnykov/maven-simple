@@ -16,7 +16,7 @@ help:
 	@echo
 	@echo "Commands :"
 	@echo
-	@grep -E '[a-zA-Z\.\-]+:.*?@ .*$$' $(MAKEFILE_LIST)| tr -d '#' | awk 'BEGIN {FS = ":.*?@ "}; {printf "\033[32m%-13s\033[0m - %s\n", $$1, $$2}'
+	@grep -E '[a-zA-Z\.\-]+:.*?@ .*$$' $(MAKEFILE_LIST)| tr -d '#' | awk 'BEGIN {FS = ":.*?@ "}; {printf "\033[32m%-17s\033[0m - %s\n", $$1, $$2}'
 
 build-deps-check:
 	@. $(SDKMAN)
@@ -30,7 +30,6 @@ endif
 
 	@. $(SDKMAN) && echo N | sdk install java $(JAVA_VER) && sdk use java $(JAVA_VER)
 	@. $(SDKMAN) && echo N | sdk install maven $(MAVEN_VER) && sdk use maven $(MAVEN_VER)
-
 #check-env: @ Check installed tools
 check-env: build-deps-check
 
@@ -38,28 +37,32 @@ check-env: build-deps-check
 	$(SDKMAN_EXISTS)
 	@printf "\n"
 
-#build: @ Build project
-build: check-env
-	@. $(SDKMAN) && sdk use java $(JAVA_VER) && sdk use maven $(MAVEN_VER) && mvn clean package install -Dmaven.test.skip=true
+#clean: @ Cleanup
+clean:
+	@ mvn clean
 
 #test: @ Run project tests
 test: build
 	@. $(SDKMAN) && sdk use java $(JAVA_VER) && sdk use maven $(MAVEN_VER) && mvn test
+
+#build: @ Build project
+build: check-env
+	@. $(SDKMAN) && sdk use java $(JAVA_VER) && sdk use maven $(MAVEN_VER) && mvn clean package install -Dmaven.test.skip=true
 
 # mvn org.owasp:dependency-check-maven:12.1.3:check -DnvdApiKey=${NVD_API_KEY}
 #cve-check: @ Run dependencies check for publicly disclosed vulnerabilities in application dependencies
 cve-check:
 	@mvn dependency-check:check # -DnvdApiKey==${NVD_API_KEY}
 
-#j-generate: @ Generate code coverage report
-j-generate:
+#coverage-generate: @ Generate code coverage report
+coverage-generate:
 	@ mvn jacoco:report
 
-#j-check: @ Check if coverage meets the 70% threshold
-j-check:
+#coverage-check: @ Verify code coverage meets minimum threshold ( > 70%)
+coverage-check:
 	@ mvn jacoco:check
 
-#j-open: @ Open code coverage report
-j-open:
+#coverage-open: @ Open code coverage report
+coverage-open:
 	@ xdg-open target/site/jacoco/index.html
 
