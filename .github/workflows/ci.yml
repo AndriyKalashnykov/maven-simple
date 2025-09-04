@@ -34,6 +34,10 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-build-${{ env.cache-name }}-
 
+    - uses: sfesenko/setup-sdkman@c360e935fffb3cfa33eddd5748464329240cfd89 # v1
+    - run: |
+        source ~/.sdkman/bin/sdkman-init.sh
+
     - name: Build
       run: make build
 
