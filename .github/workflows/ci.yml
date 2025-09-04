@@ -39,7 +39,7 @@ jobs:
         source ~/.sdkman/bin/sdkman-init.sh
 
     - name: Build
-      run: make build
+      run: make clean build
 
     - name: Test
       run: make clean test

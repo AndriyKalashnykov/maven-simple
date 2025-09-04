@@ -17,6 +17,7 @@
   ],
   "enabledManagers": [
     "maven",
+    "gradle",
     "github-actions"
   ],
   "prConcurrentLimit": 2,
