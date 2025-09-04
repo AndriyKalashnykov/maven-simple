@@ -44,11 +44,11 @@ clean:
 
 #test: @ Run project tests
 test: build
-	@. mvn test
+	@ mvn test
 
 #build: @ Build project
 build:
-	@ mvn package -Dmaven.test.skip=true
+	@ mvn package install -Dmaven.test.skip=true
 
 # mvn org.owasp:dependency-check-maven:12.1.3:check -DnvdApiKey=${NVD_API_KEY}
 #cve-check: @ Run dependencies check for publicly disclosed vulnerabilities in application dependencies
