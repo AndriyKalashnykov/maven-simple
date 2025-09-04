@@ -47,8 +47,8 @@ test: build
 	@. $(SDKMAN) && sdk use java $(JAVA_VER) && sdk use maven $(MAVEN_VER) && mvn test
 
 # mvn org.owasp:dependency-check-maven:12.1.3:check -DnvdApiKey=${NVD_API_KEY}
-#cve-dep-check: @ Run dependencies check - publicly disclosed vulnerabilities in application dependencies
-cve-dep-check:
+#cve-check: @ Run dependencies check for publicly disclosed vulnerabilities in application dependencies
+cve-check:
 	@mvn dependency-check:check # -DnvdApiKey==${NVD_API_KEY}
 
 #j-generate: @ Generate code coverage report

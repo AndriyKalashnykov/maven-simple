@@ -47,9 +47,9 @@ Check pre-reqs:
 make check-env
 ```
 
-Run dependencies check - publicly disclosed vulnerabilities in application dependencies:
+Run dependencies check for publicly disclosed vulnerabilities in application dependencies:
 ```bash
-make cve-dep-check
+make cve-check
 ```
 
 ### Help
