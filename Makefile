@@ -31,7 +31,7 @@ endif
 	@. $(SDKMAN) && echo N | sdk install java $(JAVA_VER) && sdk use java $(JAVA_VER)
 	@. $(SDKMAN) && echo N | sdk install maven $(MAVEN_VER) && sdk use maven $(MAVEN_VER)
 
-#check-env: @ Check environment variables and installed tools
+#check-env: @ Check installed tools
 check-env: build-deps-check
 
 	@printf "\xE2\x9C\x94 "

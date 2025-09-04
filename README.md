@@ -64,7 +64,7 @@ Usage: make COMMAND
 Commands :
 
 help          - List available tasks on this project
-check-env     - Check environment variables and installed tools
+check-env     - Check installed tools
 build         - Build project
 test          - Run project tests
 cve-dep-check - Run dependencies check - publicly disclosed vulnerabilities in application dependencies
