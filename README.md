@@ -40,6 +40,18 @@ of how to work with  using
 * [Jackson](https://github.com/FasterXML/jackson) 
 * [Gson](https://github.com/google/gson)
 
+## Usage
+
+Check pre-reqs:
+```bash
+make check-env
+```
+
+Run dependencies check - publicly disclosed vulnerabilities in application dependencies:
+```bash
+make cve-dep-check
+```
+
 ### Help
 
 ```bash
