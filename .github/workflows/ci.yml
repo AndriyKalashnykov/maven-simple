@@ -33,6 +33,14 @@ jobs:
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
           ${{ runner.os }}-build-${{ env.cache-name }}-
-      
-    - name: Test with Maven
-      run: mvn -B clean package test --file pom.xml
+
+    - name: Build
+      run: make build
+
+    - name: Test
+      run: make clean test
+
+    - name: Verify code coverage meets minimum threshold ( > 70%)
+      run: make coverage-generate coverage-check
+
+
