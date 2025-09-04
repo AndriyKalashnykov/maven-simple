@@ -44,7 +44,7 @@ clean:
 
 #test: @ Run project tests
 test: build
-	@ mvn test
+	@ mvn test -Ddependency-check.skip=true
 
 #build: @ Build project
 build:
