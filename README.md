@@ -46,4 +46,17 @@ of how to work with  using
 make help
 ```
 
-![make-help](./images/help.png)
+```text
+Usage: make COMMAND
+
+Commands :
+
+help       - List available tasks on this project
+check-env  - Check environment variables and installed tools
+build      - Build project
+test       - Run project tests
+dep-check  - Run dependencies check - publicly disclosed vulnerabilities in application dependencies
+j-generate - Generate Jacoco report
+j-check    - Check if coverage meets the 70% threshold
+j-open     - Open Jacoco report
+```
