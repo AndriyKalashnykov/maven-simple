@@ -7,7 +7,7 @@
 
 - [sdkman](https://sdkman.io/install)
 
-    Install and use JDK 21
+    Install and use JDK
 
     ```bash
     sdk install java 21-tem
@@ -15,7 +15,7 @@
     ```
 - [Apache Maven](https://maven.apache.org/install.html)
 
-    Install Apache Maven 3.9.9
+    Install Apache Maven
 
     ```bash
     sdk install maven 3.9.9
