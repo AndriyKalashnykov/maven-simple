@@ -35,4 +35,4 @@ jobs:
           ${{ runner.os }}-build-${{ env.cache-name }}-
       
     - name: Test with Maven
-      run: mvn -B test --file pom.xml
+      run: mvn -B clean package test --file pom.xml
