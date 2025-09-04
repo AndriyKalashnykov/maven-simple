@@ -16,7 +16,7 @@ help:
 	@echo
 	@echo "Commands :"
 	@echo
-	@grep -E '[a-zA-Z\.\-]+:.*?@ .*$$' $(MAKEFILE_LIST)| tr -d '#' | awk 'BEGIN {FS = ":.*?@ "}; {printf "\033[32m%-9s\033[0m - %s\n", $$1, $$2}'
+	@grep -E '[a-zA-Z\.\-]+:.*?@ .*$$' $(MAKEFILE_LIST)| tr -d '#' | awk 'BEGIN {FS = ":.*?@ "}; {printf "\033[32m%-10s\033[0m - %s\n", $$1, $$2}'
 
 build-deps-check:
 	@. $(SDKMAN)
@@ -45,6 +45,18 @@ build: check-env
 #test: @ Run project tests
 test: build
 	@. $(SDKMAN) && sdk use java $(JAVA_VER) && sdk use maven $(MAVEN_VER) && mvn test
+
+#j-generate: @ Generate Jacoco report
+j-generate:
+	@ mvn jacoco:report
+
+#j-check: @ Check if coverage meets the 70% threshold
+j-check:
+	@ mvn jacoco:check
+
+#j-open: @ Open Jacoco report
+j-open:
+	@ xdg-open target/site/jacoco/index.html
 
 # mvn org.owasp:dependency-check-maven:12.1.3:check -DnvdApiKey=${NVD_API_KEY}
 #dep-check: @ Run dependencies check - publicly disclosed vulnerabilities in application dependencies
