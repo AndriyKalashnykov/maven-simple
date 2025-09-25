@@ -252,7 +252,7 @@
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
                 <!-- https://dependency-check.github.io/DependencyCheck/dependency-check-maven/ -->
-                <version>12.1.5</version>
+                <version>12.1.6</version>
                 <executions>
                     <execution>
                         <goals>
