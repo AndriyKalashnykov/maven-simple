@@ -13,24 +13,49 @@
     ":automergePr",
     ":automergeRequireAllStatusChecks",
     ":prConcurrentLimitNone",
-    ":separatePatchReleases"
+    ":separatePatchReleases",
+    "replacements:all",
+    "workarounds:all"
   ],
   "enabledManagers": [
     "maven",
     "gradle",
     "github-actions"
   ],
-  "prConcurrentLimit": 2,
-  "platformAutomerge": true,
   "commitMessagePrefix": "chore(all): ",
   "commitMessageAction": "update",
   "commitBody": "Signed-off-by: Renovate Bot <bot@renovateapp.com>",
+  "platformAutomerge": true,
+  "prConcurrentLimit": 0,
+  "prHourlyLimit": 0,
+  "groupName": "all",
   "packageRules": [
+    {
+      "description": "Automerge major updates",
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "matchCategories": [
+        "java"
+      ],
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": true
+    },
     {
       "description": "Automerge non-major updates",
       "matchUpdateTypes": [
         "minor",
-        "patch"
+        "patch",
+        "digest",
+        "pin",
+        "internal",
+        "devDependencies",
+        "ref",
+        "none",
+        "security",
+        "grop",
+        "unpin"
       ],
       "automerge": true,
       "automergeType": "pr",

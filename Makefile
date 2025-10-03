@@ -74,7 +74,7 @@ help:
 	@echo
 	@echo "Commands :"
 	@echo
-	@grep -E '[a-zA-Z\.\-]+:.*?@ .*$$' $(MAKEFILE_LIST)| tr -d '#' | awk 'BEGIN {FS = ":.*?@ "}; {printf "\033[32m%-17s\033[0m - %s\n", $$1, $$2}'
+	@grep -E '[a-zA-Z\.\-]+:.*?@ .*$$' $(MAKEFILE_LIST)| tr -d '#' | awk 'BEGIN {FS = ":.*?@ "}; {printf "\033[32m%-18s\033[0m - %s\n", $$1, $$2}'
 
 build-deps-check:
 	@. $(SDKMAN)
@@ -125,3 +125,11 @@ coverage-check:
 coverage-open:
 	@ $(if $(filter 1,$(IS_DARWIN)),open,xdg-open) ./target/site/jacoco/index.html
 
+#print-deps-updates: @ Print project dependencies updates
+print-deps-updates:
+	@ mvn versions:display-dependency-updates
+
+#update-deps: @ Update project dependencies to latest releases
+update-deps: print-deps-updates
+	@ mvn versions:use-latest-releases
+	@ mvn versions:commit

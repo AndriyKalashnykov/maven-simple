@@ -52,6 +52,11 @@ Run dependencies check for publicly disclosed vulnerabilities in application dep
 make cve-check
 ```
 
+Update project dependencies to latest releases
+```bash
+mvn update-deps
+```
+
 ### Help
 
 ```bash
@@ -63,13 +68,15 @@ Usage: make COMMAND
 
 Commands :
 
-help              - List available tasks on this project
-check-env         - Check installed tools
-clean             - Cleanup
-test              - Run project tests
-build             - Build project
-cve-check         - Run dependencies check for publicly disclosed vulnerabilities in application dependencies
-coverage-generate - Generate code coverage report
-coverage-check    - Verify code coverage meets minimum threshold ( > 70%)
-coverage-open     - Open code coverage report
+help               - List available tasks on this project
+check-env          - Check installed tools
+clean              - Cleanup
+test               - Run project tests
+build              - Build project
+cve-check          - Run dependencies check for publicly disclosed vulnerabilities in application dependencies
+coverage-generate  - Generate code coverage report
+coverage-check     - Verify code coverage meets minimum threshold ( > 70%)
+coverage-open      - Open code coverage report
+print-deps-updates - Print project dependencies updates
+update-deps        - Update project dependencies to latest releases
 ```
