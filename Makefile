@@ -48,7 +48,7 @@ test:
 
 #build: @ Build project
 build:
-	@mvn package install -Dmaven.test.skip=true -Ddependency-check.skip=true
+	@mvn install -Dmaven.test.skip=true -Ddependency-check.skip=true
 
 #cve-check: @ Run dependencies check for publicly disclosed vulnerabilities in application dependencies
 cve-check:

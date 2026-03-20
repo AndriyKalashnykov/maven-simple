@@ -8,12 +8,9 @@ import java.util.Map;
 
 public class GsonTreeModel {
 
-    // JsonParser is stateless and thread-safe so it's OK to create one like this
-    private static final JsonParser parser = new JsonParser();
-
     public static void main(String[] args) {
 
-        JsonElement neoJsonElement = parser.parse(SourceData.asString());
+        JsonElement neoJsonElement = JsonParser.parseString(SourceData.asString());
 
         System.out.println("NEO count: " + getNeoCount(neoJsonElement));
 

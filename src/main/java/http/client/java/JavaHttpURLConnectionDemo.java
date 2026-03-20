@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 
 public class JavaHttpURLConnectionDemo {
@@ -17,7 +18,7 @@ public class JavaHttpURLConnectionDemo {
     public static void main(String[] args) throws IOException {
 
         // Create a neat value object to hold the URL
-        URL url = new URL("https://jsonmock.hackerrank.com/api/article_users?page=2");
+        URL url = URI.create("https://jsonmock.hackerrank.com/api/article_users?page=2").toURL();
 
         // Open a connection(?) on the URL(?) and cast the response(??)
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();

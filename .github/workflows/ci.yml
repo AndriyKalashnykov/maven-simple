@@ -30,7 +30,7 @@ jobs:
           cache: 'maven'
 
       - name: Build
-        run: mvn package install -Dmaven.test.skip=true -Ddependency-check.skip=true
+        run: mvn install -Dmaven.test.skip=true -Ddependency-check.skip=true
 
       - name: Test with coverage
         run: mvn test -Ddependency-check.skip=true jacoco:report
@@ -81,6 +81,7 @@ jobs:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
           OSS_INDEX_USER: ${{ secrets.OSS_INDEX_USER }}
           OSS_INDEX_TOKEN: ${{ secrets.OSS_INDEX_TOKEN }}
+          MAVEN_OPTS: '--add-modules jdk.incubator.vector'
         run: mvn dependency-check:check -DnvdApiKey=$NVD_API_KEY
 
       - name: Upload CVE report
