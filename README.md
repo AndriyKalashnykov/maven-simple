@@ -47,20 +47,27 @@ Examples of how to work with JSON using:
 ```bash
 make build              # Build project
 make test               # Run tests
+make clean              # Clean build artifacts
 make coverage-generate  # Generate JaCoCo coverage report
 make coverage-check     # Verify coverage meets minimum threshold (>70%)
 make coverage-open      # Open coverage report in browser
 make cve-check          # OWASP dependency vulnerability scan
 make update-deps        # Update dependencies to latest releases
 make check-env          # Verify pre-requisites are installed
+make help               # List all available targets
 ```
 
 ### OWASP CVE Check
 
 `make cve-check` scans dependencies for known vulnerabilities using two data sources:
 
-- **[NVD](https://nvd.nist.gov/)** — NIST National Vulnerability Database. Without an API key, requests are rate-limited and the scan may fail with a 429 error. Request a free key at https://nvd.nist.gov/developers/request-an-api-key
-- **[OSS Index](https://ossindex.sonatype.org/)** — Sonatype's vulnerability database, provides additional coverage beyond NVD. Authentication is now required — without credentials the analyzer is skipped. Register for a free account at https://ossindex.sonatype.org/user/register and get your API token from account settings.
+- **[NVD](https://nvd.nist.gov/)** — NIST National Vulnerability Database.
+  Without an API key, requests are rate-limited and the scan may fail with a 429 error.
+  Request a free key at https://nvd.nist.gov/developers/request-an-api-key
+
+- **[OSS Index](https://ossindex.sonatype.org/)** — Sonatype's vulnerability database, provides additional coverage beyond NVD.
+  Authentication is required — without credentials the analyzer is skipped.
+  Register for a free account at https://ossindex.sonatype.org/user/register and get your API token from account settings.
 
 ```bash
 export NVD_API_KEY=your-key-here
@@ -69,7 +76,7 @@ export OSS_INDEX_TOKEN=your-token-here
 make cve-check
 ```
 
-OSS Index credentials are read from env vars via Maven settings. If you don't have `~/.m2/settings.xml`, create one:
+The NVD key is passed to Maven automatically via the Makefile. OSS Index credentials are read from env vars via `~/.m2/settings.xml`. If you don't have one, create it:
 
 ```xml
 <settings>
@@ -81,10 +88,4 @@ OSS Index credentials are read from env vars via Maven settings. If you don't ha
         </server>
     </servers>
 </settings>
-```
-
-### Help
-
-```bash
-make help
 ```
