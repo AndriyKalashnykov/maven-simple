@@ -253,6 +253,9 @@
                 <artifactId>dependency-check-maven</artifactId>
                 <!-- https://dependency-check.github.io/DependencyCheck/dependency-check-maven/ -->
                 <version>12.2.0</version>
+                <configuration>
+                    <ossIndexServerId>ossindex</ossIndexServerId>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
