@@ -47,13 +47,18 @@ Examples of how to work with JSON using:
 ```bash
 make build              # Build project
 make test               # Run tests
+make lint               # Validate project configuration
 make clean              # Clean build artifacts
+make ci                 # Full CI pipeline (lint, build, test, coverage)
+make ci-run             # Run GitHub Actions workflow locally using act
 make coverage-generate  # Generate JaCoCo coverage report
 make coverage-check     # Verify coverage meets minimum threshold (>70%)
 make coverage-open      # Open coverage report in browser
 make cve-check          # OWASP dependency vulnerability scan
-make update-deps        # Update dependencies to latest releases
-make check-env          # Verify pre-requisites are installed
+make deps-updates       # Print available dependency updates
+make deps-update        # Update dependencies to latest releases
+make release VERSION=x.y.z  # Tag and push a release
+make env-check          # Verify pre-requisites are installed
 make help               # List all available targets
 ```
 

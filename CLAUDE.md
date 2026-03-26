@@ -9,24 +9,21 @@ Educational Java project demonstrating HTTP client implementations and JSON pars
 ## Build & Test Commands
 
 ```bash
-# Build (skips tests and OWASP dependency-check)
-mvn package install -Dmaven.test.skip=true -Ddependency-check.skip=true
+make build              # Build project (skips tests and OWASP dependency-check)
+make test               # Run all tests
+make lint               # Validate project configuration
+make ci                 # Full CI pipeline (lint, build, test, coverage)
+make ci-run             # Run GitHub Actions workflow locally using act
+make coverage-generate  # Generate JaCoCo coverage report
+make coverage-check     # Verify coverage meets 70% threshold
+make cve-check          # OWASP CVE scan (slow, not part of normal workflow)
+make deps-updates       # Print available dependency updates
+make deps-update        # Update dependencies to latest releases
+make release VERSION=x.y.z  # Tag and push a release
 
-# Run all tests
-mvn test -Ddependency-check.skip=true
-
-# Run a single test class
-mvn test -Dtest=ClassName -Ddependency-check.skip=true
-
-# Coverage report + threshold check (70% min instruction & branch)
-mvn test -Ddependency-check.skip=true jacoco:report
-mvn jacoco:check
-
-# OWASP CVE scan (slow, not part of normal workflow)
-mvn dependency-check:check
+# Run a single test class (raw mvn)
+mvn -B test -Dtest=ClassName -Ddependency-check.skip=true
 ```
-
-Makefile wraps these commands but adds SDKMAN setup overhead — prefer raw `mvn` in CI.
 
 ## Architecture
 
