@@ -29,6 +29,14 @@ deps:
 	@command -v mvn >/dev/null 2>&1 || { echo "Error: mvn is not installed"; exit 1; }
 	@echo "All required dependencies are available"
 
+#deps-maven: @ Install Maven if not present (for CI containers)
+deps-maven:
+	@command -v mvn >/dev/null 2>&1 || { \
+		echo "Installing Maven $(MAVEN_VER)..."; \
+		curl -fsSL "https://archive.apache.org/dist/maven/maven-3/$(MAVEN_VER)/binaries/apache-maven-$(MAVEN_VER)-bin.tar.gz" | tar xz -C /opt; \
+		ln -sf "/opt/apache-maven-$(MAVEN_VER)/bin/mvn" /usr/local/bin/mvn; \
+	}
+
 #deps-install: @ Install Java and Maven via SDKMAN
 deps-install:
 	@if [ ! -f "$(SDKMAN)" ]; then \
@@ -71,7 +79,11 @@ ci: deps lint build test coverage-generate coverage-check
 
 #ci-run: @ Run GitHub Actions workflow locally using act
 ci-run: deps-act
-	@act push --container-architecture linux/amd64
+	@act push --container-architecture linux/amd64 \
+		--artifact-server-path /tmp/act-artifacts \
+		$(if $(NVD_API_KEY),--secret NVD_API_KEY=$(NVD_API_KEY)) \
+		$(if $(OSS_INDEX_USER),--secret OSS_INDEX_USER=$(OSS_INDEX_USER)) \
+		$(if $(OSS_INDEX_TOKEN),--secret OSS_INDEX_TOKEN=$(OSS_INDEX_TOKEN))
 
 #release: @ Create a release (usage: make release VERSION=x.y.z)
 release: deps
@@ -119,6 +131,6 @@ deps-update: deps-updates
 	@mvn -B versions:use-latest-releases
 	@mvn -B versions:commit
 
-.PHONY: help deps deps-install deps-act deps-updates deps-update \
+.PHONY: help deps deps-maven deps-install deps-act deps-updates deps-update \
 	env-check clean build test lint ci ci-run release \
 	cve-check coverage-generate coverage-check coverage-open

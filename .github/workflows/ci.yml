@@ -29,6 +29,9 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
+      - name: Ensure Maven is installed
+        run: make deps-maven
+
       - name: Build
         run: make build
 
@@ -63,6 +66,9 @@ jobs:
           java-version: 21
           distribution: 'temurin'
           cache: 'maven'
+
+      - name: Ensure Maven is installed
+        run: make deps-maven
 
       - name: Create Maven settings for OSS Index
         run: |
