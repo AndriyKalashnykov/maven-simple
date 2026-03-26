@@ -14,8 +14,11 @@ else
 	OPEN_CMD := xdg-open
 endif
 
-.PHONY: help check-env build-deps-check clean test build cve-check \
-	coverage-generate coverage-check coverage-open print-deps-updates update-deps
+# Semver regex for release validation
+SEMVER_RE := ^[0-9]+\.[0-9]+\.[0-9]+$$
+
+.PHONY: help deps deps-check check-env clean test build lint run ci release \
+	cve-check coverage-generate coverage-check coverage-open print-deps-updates update-deps
 
 #help: @ List available tasks on this project
 help:
@@ -26,7 +29,14 @@ help:
 	@echo
 	@grep -E '[a-zA-Z\.\-]+:.*?@ .*$$' $(MAKEFILE_LIST)| tr -d '#' | awk 'BEGIN {FS = ":.*?@ "}; {printf "\033[32m%-18s\033[0m - %s\n", $$1, $$2}'
 
-build-deps-check:
+#deps: @ Check that required tools (java, mvn) are installed
+deps:
+	@command -v java >/dev/null 2>&1 || { echo "Error: java is not installed"; exit 1; }
+	@command -v mvn >/dev/null 2>&1 || { echo "Error: mvn is not installed"; exit 1; }
+	@echo "All required dependencies are available"
+
+#deps-check: @ Install Java and Maven via SDKMAN
+deps-check:
 	@if [ ! -f "$(SDKMAN)" ]; then \
 		echo "Installing SDKMAN..."; \
 		curl -s "https://get.sdkman.io?rcupdate=false" | bash; \
@@ -35,7 +45,7 @@ build-deps-check:
 	@. $(SDKMAN) && echo N | sdk install maven $(MAVEN_VER) && sdk use maven $(MAVEN_VER)
 
 #check-env: @ Check installed tools
-check-env: build-deps-check
+check-env: deps-check
 	@printf "\xE2\x9C\x94 sdkman\n"
 
 #clean: @ Cleanup
@@ -49,6 +59,32 @@ test:
 #build: @ Build project
 build:
 	@mvn install -Dmaven.test.skip=true -Ddependency-check.skip=true
+
+#lint: @ Run static analysis checks
+lint:
+	@mvn validate -Ddependency-check.skip=true
+
+#run: @ Run the application
+run:
+	@mvn exec:java -Ddependency-check.skip=true
+
+#ci: @ Run full CI pipeline (deps, lint, build, test)
+ci: deps lint build test
+
+#release: @ Create a release (usage: make release VERSION=x.y.z)
+release:
+	@if [ -z "$(VERSION)" ]; then \
+		echo "Error: VERSION is required (e.g., make release VERSION=1.0.0)"; \
+		exit 1; \
+	fi
+	@if ! echo "$(VERSION)" | grep -qE '$(SEMVER_RE)'; then \
+		echo "Error: VERSION must be valid semver (e.g., 1.0.0)"; \
+		exit 1; \
+	fi
+	@echo "Releasing version $(VERSION)..."
+	@mvn versions:set -DnewVersion=$(VERSION) -DgenerateBackupPoms=false
+	@mvn clean install -Ddependency-check.skip=true
+	@echo "Release $(VERSION) built successfully"
 
 #cve-check: @ Run dependencies check for publicly disclosed vulnerabilities in application dependencies
 cve-check:

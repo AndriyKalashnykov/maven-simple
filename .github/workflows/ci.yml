@@ -30,13 +30,13 @@ jobs:
           cache: 'maven'
 
       - name: Build
-        run: mvn install -Dmaven.test.skip=true -Ddependency-check.skip=true
+        run: make build
 
       - name: Test with coverage
-        run: mvn test -Ddependency-check.skip=true jacoco:report
+        run: make coverage-generate
 
       - name: Verify coverage threshold (>70%)
-        run: mvn jacoco:check
+        run: make coverage-check
 
       - name: Upload coverage report
         if: always()
@@ -82,7 +82,7 @@ jobs:
           OSS_INDEX_USER: ${{ secrets.OSS_INDEX_USER }}
           OSS_INDEX_TOKEN: ${{ secrets.OSS_INDEX_TOKEN }}
           MAVEN_OPTS: '--add-modules jdk.incubator.vector'
-        run: mvn dependency-check:check -DnvdApiKey=$NVD_API_KEY
+        run: make cve-check
 
       - name: Upload CVE report
         if: always()
