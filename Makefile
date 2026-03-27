@@ -25,8 +25,8 @@ help:
 
 #deps: @ Check that required tools (java, mvn) are installed
 deps:
-	@command -v java >/dev/null 2>&1 || { echo "Error: java is not installed"; exit 1; }
-	@command -v mvn >/dev/null 2>&1 || { echo "Error: mvn is not installed"; exit 1; }
+	@command -v java >/dev/null 2>&1 || { echo "Error: Java required. Run: make deps-install"; exit 1; }
+	@command -v mvn >/dev/null 2>&1 || { echo "Error: Maven required. Run: make deps-install"; exit 1; }
 	@echo "All required dependencies are available"
 
 #deps-maven: @ Install Maven if not present (for CI containers)
@@ -58,7 +58,7 @@ env-check: deps-install
 	@printf "\xE2\x9C\x94 sdkman\n"
 
 #clean: @ Cleanup
-clean:
+clean: deps
 	@mvn clean -q
 
 #build: @ Build project
@@ -116,11 +116,20 @@ coverage-generate: deps
 
 #coverage-check: @ Verify code coverage meets minimum threshold (>70%)
 coverage-check: deps
-	@mvn -B jacoco:check
+	@mvn -B jacoco:check -Ddependency-check.skip=true
 
 #coverage-open: @ Open code coverage report
 coverage-open:
 	@$(OPEN_CMD) ./target/site/jacoco/index.html
+
+#maven-settings-ossindex: @ Create Maven settings for OSS Index credentials
+maven-settings-ossindex:
+	@mkdir -p ~/.m2 && \
+	printf '<settings>\n  <servers>\n    <server>\n      <id>ossindex</id>\n      <username>$${env.OSS_INDEX_USER}</username>\n      <password>$${env.OSS_INDEX_TOKEN}</password>\n    </server>\n  </servers>\n</settings>\n' > ~/.m2/settings.xml
+
+#renovate-validate: @ Validate Renovate configuration
+renovate-validate:
+	@npx --yes renovate-config-validator
 
 #deps-updates: @ Print project dependencies updates
 deps-updates: deps
@@ -133,4 +142,5 @@ deps-update: deps-updates
 
 .PHONY: help deps deps-maven deps-install deps-act deps-updates deps-update \
 	env-check clean build test lint ci ci-run release \
-	cve-check coverage-generate coverage-check coverage-open
+	cve-check coverage-generate coverage-check coverage-open \
+	maven-settings-ossindex renovate-validate

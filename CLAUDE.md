@@ -9,17 +9,26 @@ Educational Java project demonstrating HTTP client implementations and JSON pars
 ## Build & Test Commands
 
 ```bash
+make help               # List available tasks
+make deps               # Check that required tools (java, mvn) are installed
+make deps-maven         # Install Maven if not present (for CI containers)
+make deps-install       # Install Java and Maven via SDKMAN
+make deps-act           # Install act for local CI
 make build              # Build project (skips tests and OWASP dependency-check)
 make test               # Run all tests
 make lint               # Validate project configuration
+make clean              # Cleanup
 make ci                 # Full CI pipeline (lint, build, test, coverage)
 make ci-run             # Run GitHub Actions workflow locally using act
 make coverage-generate  # Generate JaCoCo coverage report
 make coverage-check     # Verify coverage meets 70% threshold
+make coverage-open      # Open code coverage report
 make cve-check          # OWASP CVE scan (slow, not part of normal workflow)
 make deps-updates       # Print available dependency updates
 make deps-update        # Update dependencies to latest releases
+make env-check          # Check installed tools
 make release VERSION=x.y.z  # Tag and push a release
+make renovate-validate  # Validate Renovate configuration
 
 # Run a single test class (raw mvn)
 mvn -B test -Dtest=ClassName -Ddependency-check.skip=true
@@ -44,3 +53,16 @@ JUnit 4 tests in `src/test/java/` mirror the main source structure. Tests typica
 
 - **pom.xml** — maven-enforcer-plugin requires Maven 3+ and Java 11+; JaCoCo 70% threshold; OWASP dependency-check bound to build lifecycle (skip with `-Ddependency-check.skip=true`)
 - **renovate.json** — Automated dependency PRs with automerge on all update types
+
+## Skills
+
+Use the following skills when working on related files:
+
+| File(s) | Skill |
+|---------|-------|
+| `Makefile` | `/makefile` |
+| `renovate.json` | `/renovate` |
+| `README.md` | `/readme` |
+| `.github/workflows/*.yml` | `/ci-workflow` |
+
+When spawning subagents, always pass conventions from the respective skill into the agent's prompt.

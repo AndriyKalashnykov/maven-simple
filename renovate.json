@@ -2,18 +2,7 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:best-practices",
-    ":label(dependencies)",
-    ":semanticCommitType(chore)",
-    "docker:pinDigests",
-    "helpers:pinGitHubActionDigests",
-    ":dependencyDashboard",
-    "schedule:daily",
-    ":automergeAll",
-    ":automergePr",
-    ":automergeRequireAllStatusChecks",
-    ":prConcurrentLimitNone",
-    "replacements:all",
-    "workarounds:all"
+    ":semanticCommitType(chore)"
   ],
   "enabledManagers": [
     "maven",
@@ -22,55 +11,34 @@
   "commitMessagePrefix": "chore(all): ",
   "commitMessageAction": "update",
   "commitBody": "Signed-off-by: Renovate Bot <bot@renovateapp.com>",
-  "platformAutomerge": true,
+  "labels": ["dependencies"],
+  "prConcurrentLimit": 50,
   "prHourlyLimit": 0,
+  "platformAutomerge": true,
+  "automerge": true,
+  "automergeType": "pr",
+  "automergeStrategy": "squash",
+  "ignoreTests": false,
+  "vulnerabilityAlerts": {
+    "labels": ["security"],
+    "automerge": true,
+    "minimumReleaseAge": "0 days"
+  },
   "packageRules": [
     {
+      "description": "Wait 3 days before automerging major updates",
+      "matchUpdateTypes": ["major"],
+      "minimumReleaseAge": "3 days"
+    },
+    {
       "description": "Label Java dependencies",
-      "matchCategories": [
-        "java"
-      ],
-      "addLabels": [
-        "lang: java"
-      ]
+      "matchCategories": ["java"],
+      "addLabels": ["lang: java"]
     },
     {
-      "groupName": "Apache commons",
-      "description": "All apache commons grouped into one PR",
-      "matchPackageNames": [
-        "commons-io:commons-io",
-        "org.apache.commons:*"
-      ]
-    },
-    {
-      "groupName": "annotations",
-      "matchPackageNames": [
-        "com.google.errorprone:*",
-        "net.jcip:jcip-annotations",
-        "org.checkerframework:checker-qual",
-        "org.jetbrains:annotations",
-        "org.jspecify:jspecify"
-      ]
-    },
-    {
-      "groupName": "GitHub Actions",
-      "description": "Group all GitHub Actions into one PR",
-      "matchManagers": [
-        "github-actions"
-      ]
+      "description": "Group GitHub Actions into one PR",
+      "matchManagers": ["github-actions"],
+      "groupName": "GitHub Actions"
     }
-  ],
-  "labels": [
-    "automerge",
-    "dependencies"
-  ],
-  "dependencyDashboardLabels": [
-    "type: process"
-  ],
-  "vulnerabilityAlerts": {
-    "labels": [
-      "type:security"
-    ],
-    "minimumReleaseAge": null
-  }
+  ]
 }

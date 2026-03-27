@@ -46,7 +46,7 @@ jobs:
 
       - name: Upload coverage report
         if: always()
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v7
         with:
           name: coverage-report
           path: target/site/jacoco/
@@ -72,19 +72,7 @@ jobs:
         run: make deps-maven
 
       - name: Create Maven settings for OSS Index
-        run: |
-          mkdir -p ~/.m2
-          cat > ~/.m2/settings.xml << 'EOF'
-          <settings>
-              <servers>
-                  <server>
-                      <id>ossindex</id>
-                      <username>${env.OSS_INDEX_USER}</username>
-                      <password>${env.OSS_INDEX_TOKEN}</password>
-                  </server>
-              </servers>
-          </settings>
-          EOF
+        run: make maven-settings-ossindex
 
       - name: OWASP dependency check
         env:
@@ -96,7 +84,7 @@ jobs:
 
       - name: Upload CVE report
         if: always()
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v7
         with:
           name: cve-report
           path: target/dependency-check-report.html

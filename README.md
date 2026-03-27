@@ -1,26 +1,37 @@
-[![test](https://github.com/AndriyKalashnykov/maven-simple/actions/workflows/ci.yml/badge.svg)](https://github.com/AndriyKalashnykov/maven-simple/actions/workflows/ci.yml)
+[![CI](https://github.com/AndriyKalashnykov/maven-simple/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/AndriyKalashnykov/maven-simple/actions/workflows/ci.yml)
 [![Hits](https://hits.sh/github.com/AndriyKalashnykov/maven-simple.svg?view=today-total&style=plastic)](https://hits.sh/github.com/AndriyKalashnykov/maven-simple/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
+[![Renovate enabled](https://img.shields.io/badge/renovate-enabled-brightgreen.svg)](https://app.renovatebot.com/dashboard#github/AndriyKalashnykov/maven-simple)
 
-# Maven based Java project for general purpose testing
+# Maven Simple
+
+Educational Java 21 project demonstrating HTTP client implementations and JSON parsing techniques using NASA's Near-Earth Objects (NEO) API data. Built with Maven and tested with JUnit 4.
+
+## Quick Start
+
+```bash
+make deps      # verify Java and Maven are installed
+make build     # build the project
+make test      # run all tests
+```
 
 ## Prerequisites
 
-| Tool | Required | Notes |
-|------|----------|-------|
-| [GNU Make](https://www.gnu.org/software/make/) | Yes | Build orchestration |
-| [Java 21](https://adoptium.net/) | Yes | Temurin distribution |
-| [Apache Maven](https://maven.apache.org/install.html) | Yes | Build tool |
-| [sdkman](https://sdkman.io/install) | No | Optional — `make deps-install` uses it to install Java and Maven |
-| [Docker](https://docs.docker.com/get-docker/) | No | Only for `make ci-run` (local CI via [act](https://github.com/nektos/act)) |
+| Tool | Version | Purpose |
+|------|---------|---------|
+| [GNU Make](https://www.gnu.org/software/make/) | 3.81+ | Build orchestration |
+| [JDK](https://adoptium.net/) | 21+ | Java runtime and compiler |
+| [Maven](https://maven.apache.org/) | 3.9+ | Build and dependency management |
+| [SDKMAN](https://sdkman.io/) | latest | Java/Maven version management (optional) |
+| [Docker](https://www.docker.com/) | latest | Local CI via [act](https://github.com/nektos/act) (optional) |
 
-Verify required tools are installed:
+Install all required dependencies:
 
 ```bash
 make deps
 ```
 
-## [HTTP clients in Java](https://github.com/AndriyKalashnykov/maven-simple/tree/main/src/main/java/http/client)
+## [HTTP Clients in Java](https://github.com/AndriyKalashnykov/maven-simple/tree/main/src/main/java/http/client)
 
 Core Java:
 * [HttpURLConnection](https://www.javatpoint.com/java-http-url-connection)
@@ -38,25 +49,54 @@ Examples of how to work with JSON using:
 * [Gson](https://github.com/google/gson) — tree models, data binding (simple & complex)
 * [JsonPath](https://github.com/json-path/JsonPath) — path-based queries
 
-## Usage
+## Available Make Targets
 
-```bash
-make build              # Build project
-make test               # Run tests
-make lint               # Validate project configuration
-make clean              # Clean build artifacts
-make ci                 # Full CI pipeline (lint, build, test, coverage)
-make ci-run             # Run GitHub Actions workflow locally using act
-make coverage-generate  # Generate JaCoCo coverage report
-make coverage-check     # Verify coverage meets minimum threshold (>70%)
-make coverage-open      # Open coverage report in browser
-make cve-check          # OWASP dependency vulnerability scan
-make deps-updates       # Print available dependency updates
-make deps-update        # Update dependencies to latest releases
-make release VERSION=x.y.z  # Tag and push a release
-make env-check          # Verify pre-requisites are installed
-make help               # List all available targets
-```
+Run `make help` to see all available targets.
+
+### Build & Run
+
+| Target | Description |
+|--------|-------------|
+| `make build` | Build project |
+| `make test` | Run project tests |
+| `make lint` | Validate project configuration |
+| `make clean` | Cleanup |
+
+### Code Quality
+
+| Target | Description |
+|--------|-------------|
+| `make coverage-generate` | Generate code coverage report |
+| `make coverage-check` | Verify code coverage meets minimum threshold (>70%) |
+| `make coverage-open` | Open code coverage report |
+| `make cve-check` | Run OWASP dependency vulnerability scan |
+
+### CI
+
+| Target | Description |
+|--------|-------------|
+| `make ci` | Run full CI pipeline (lint, build, test, coverage) |
+| `make ci-run` | Run GitHub Actions workflow locally using [act](https://github.com/nektos/act) |
+
+### Dependencies
+
+| Target | Description |
+|--------|-------------|
+| `make deps` | Check that required tools (java, mvn) are installed |
+| `make deps-maven` | Install Maven if not present (for CI containers) |
+| `make deps-install` | Install Java and Maven via SDKMAN |
+| `make deps-act` | Install act for local CI |
+| `make deps-updates` | Print project dependencies updates |
+| `make deps-update` | Update project dependencies to latest releases |
+
+### Utilities
+
+| Target | Description |
+|--------|-------------|
+| `make env-check` | Check installed tools |
+| `make release VERSION=x.y.z` | Create a release |
+| `make renovate-validate` | Validate Renovate configuration |
+| `make help` | List available tasks |
 
 ### OWASP CVE Check
 
@@ -90,3 +130,14 @@ The NVD key is passed to Maven automatically via the Makefile. OSS Index credent
     </servers>
 </settings>
 ```
+
+## CI/CD
+
+GitHub Actions runs on every push to `main`, tags `v*`, and pull requests.
+
+| Job | Triggers | Steps |
+|-----|----------|-------|
+| **ci** | push, PR, tags | Build, Lint, Test with coverage |
+| **cve-check** | push to main | OWASP dependency vulnerability scan |
+
+[Renovate](https://docs.renovatebot.com/) keeps dependencies up to date with platform automerge enabled.
