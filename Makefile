@@ -74,7 +74,7 @@ lint: deps
 	@mvn -B validate -Ddependency-check.skip=true
 
 #ci: @ Run full CI pipeline (lint, build, test, coverage)
-ci: deps lint build test coverage-generate coverage-check
+ci: deps lint build coverage-generate coverage-check
 	@echo "=== CI Complete ==="
 
 #ci-run: @ Run GitHub Actions workflow locally using act
@@ -99,7 +99,7 @@ release: deps
 	@echo -n "Proceed? [y/N] " && read ans && [ "$${ans:-N}" = y ] || { echo "Aborted."; exit 1; }
 	@mvn -B versions:set -DnewVersion=$(VERSION) -DgenerateBackupPoms=false
 	@mvn -B clean install -Ddependency-check.skip=true
-	@git add -A
+	@git add pom.xml
 	@git commit -m "release: cut $(VERSION)"
 	@git tag v$(VERSION)
 	@git push origin v$(VERSION)

@@ -4,25 +4,21 @@
 
 # Maven based Java project for general purpose testing
 
-## Pre-requisites
+## Prerequisites
 
-- [sdkman](https://sdkman.io/install)
+| Tool | Required | Notes |
+|------|----------|-------|
+| [GNU Make](https://www.gnu.org/software/make/) | Yes | Build orchestration |
+| [Java 21](https://adoptium.net/) | Yes | Temurin distribution |
+| [Apache Maven](https://maven.apache.org/install.html) | Yes | Build tool |
+| [sdkman](https://sdkman.io/install) | No | Optional — `make deps-install` uses it to install Java and Maven |
+| [Docker](https://docs.docker.com/get-docker/) | No | Only for `make ci-run` (local CI via [act](https://github.com/nektos/act)) |
 
-    Install and use JDK
+Verify required tools are installed:
 
-    ```bash
-    sdk install java 21-tem
-    sdk use java 21-tem
-    ```
-- [Apache Maven](https://maven.apache.org/install.html)
-
-    Install Apache Maven
-
-    ```bash
-    sdk install maven 3.9.9
-    sdk use maven 3.9.9
-    ```
-- [`GNU Make`](https://www.gnu.org/software/make/)
+```bash
+make deps
+```
 
 ## [HTTP clients in Java](https://github.com/AndriyKalashnykov/maven-simple/tree/main/src/main/java/http/client)
 
