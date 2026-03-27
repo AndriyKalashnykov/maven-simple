@@ -17,7 +17,6 @@
   ],
   "enabledManagers": [
     "maven",
-    "gradle",
     "github-actions"
   ],
   "commitMessagePrefix": "chore(all): ",
