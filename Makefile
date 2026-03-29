@@ -129,7 +129,7 @@ maven-settings-ossindex:
 
 #renovate-validate: @ Validate Renovate configuration
 renovate-validate:
-	@npx --yes renovate-config-validator
+	@npx --yes renovate --platform=local
 
 #deps-updates: @ Print project dependencies updates
 deps-updates: deps

@@ -6,12 +6,15 @@
   ],
   "enabledManagers": [
     "maven",
-    "github-actions"
+    "github-actions",
+    "custom.regex"
   ],
   "commitMessagePrefix": "chore(all): ",
   "commitMessageAction": "update",
   "commitBody": "Signed-off-by: Renovate Bot <bot@renovateapp.com>",
-  "labels": ["dependencies"],
+  "labels": [
+    "dependencies"
+  ],
   "prConcurrentLimit": 50,
   "prHourlyLimit": 0,
   "platformAutomerge": true,
@@ -20,25 +23,87 @@
   "automergeStrategy": "squash",
   "ignoreTests": false,
   "vulnerabilityAlerts": {
-    "labels": ["security"],
+    "labels": [
+      "security"
+    ],
     "automerge": true,
     "minimumReleaseAge": "0 days"
   },
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^Makefile$/"
+      ],
+      "matchStrings": [
+        "JAVA_VER\\s*:=\\s*(?<currentValue>.*?)\\n"
+      ],
+      "depNameTemplate": "java",
+      "datasourceTemplate": "adoptium-java"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^Makefile$/"
+      ],
+      "matchStrings": [
+        "ACT_VERSION\\s*:=\\s*(?<currentValue>.*?)\\n"
+      ],
+      "depNameTemplate": "nektos/act",
+      "datasourceTemplate": "github-releases"
+    }
+  ],
   "packageRules": [
     {
       "description": "Wait 3 days before automerging major updates",
-      "matchUpdateTypes": ["major"],
+      "matchUpdateTypes": [
+        "major"
+      ],
       "minimumReleaseAge": "3 days"
     },
     {
       "description": "Label Java dependencies",
-      "matchCategories": ["java"],
-      "addLabels": ["lang: java"]
+      "matchCategories": [
+        "java"
+      ],
+      "addLabels": [
+        "lang: java"
+      ]
     },
     {
       "description": "Group GitHub Actions into one PR",
-      "matchManagers": ["github-actions"],
+      "matchManagers": [
+        "github-actions"
+      ],
       "groupName": "GitHub Actions"
+    },
+    {
+      "description": "Group Jackson dependencies",
+      "groupName": "Jackson",
+      "matchPackageNames": [
+        "/^com\\.fasterxml\\.jackson/"
+      ]
+    },
+    {
+      "description": "Group OkHttp dependencies",
+      "groupName": "OkHttp",
+      "matchPackageNames": [
+        "/^com\\.squareup\\.okhttp3/"
+      ]
+    },
+    {
+      "description": "Group Retrofit dependencies",
+      "groupName": "Retrofit",
+      "matchPackageNames": [
+        "/^com\\.squareup\\.retrofit2/"
+      ]
+    },
+    {
+      "description": "Group SLF4J dependencies",
+      "groupName": "SLF4J",
+      "matchPackageNames": [
+        "/^org\\.slf4j/"
+      ]
     }
   ]
 }
