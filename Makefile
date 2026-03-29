@@ -73,8 +73,8 @@ test: deps
 lint: deps
 	@mvn -B validate -Ddependency-check.skip=true
 
-#ci: @ Run full CI pipeline (lint, build, test, coverage)
-ci: deps lint build coverage-generate coverage-check
+#ci: @ Run full CI pipeline (lint, test, coverage, build)
+ci: deps lint coverage-generate coverage-check build
 	@echo "=== CI Complete ==="
 
 #ci-run: @ Run GitHub Actions workflow locally using act

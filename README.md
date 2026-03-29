@@ -75,7 +75,7 @@ Run `make help` to see all available targets.
 
 | Target | Description |
 |--------|-------------|
-| `make ci` | Run full CI pipeline (lint, build, test, coverage) |
+| `make ci` | Run full CI pipeline (lint, test, coverage, build) |
 | `make ci-run` | Run GitHub Actions workflow locally using [act](https://github.com/nektos/act) |
 
 ### Dependencies
@@ -137,7 +137,7 @@ GitHub Actions runs on every push to `main`, tags `v*`, and pull requests.
 
 | Job | Triggers | Steps |
 |-----|----------|-------|
-| **ci** | push, PR, tags | Build, Lint, Test with coverage |
+| **ci** | push, PR, tags | Lint, Test with coverage, Build |
 | **cve-check** | push to main | OWASP dependency vulnerability scan |
 
 [Renovate](https://docs.renovatebot.com/) keeps dependencies up to date with platform automerge enabled.

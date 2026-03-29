@@ -32,9 +32,6 @@ jobs:
       - name: Ensure Maven is installed
         run: make deps-maven
 
-      - name: Build
-        run: make build
-
       - name: Lint
         run: make lint
 
@@ -43,6 +40,9 @@ jobs:
 
       - name: Verify coverage threshold (>70%)
         run: make coverage-check
+
+      - name: Build
+        run: make build
 
       - name: Upload coverage report
         if: always()
