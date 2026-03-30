@@ -6,8 +6,7 @@
   ],
   "enabledManagers": [
     "maven",
-    "github-actions",
-    "custom.regex"
+    "github-actions"
   ],
   "commitMessagePrefix": "chore(all): ",
   "commitMessageAction": "update",

@@ -21,7 +21,7 @@ SEMVER_RE := ^[0-9]+\.[0-9]+\.[0-9]+$$
 help:
 	@echo "Usage: make COMMAND"
 	@echo "Commands :"
-	@grep -E '[a-zA-Z\.\-]+:.*?@ .*$$' $(MAKEFILE_LIST)| tr -d '#' | awk 'BEGIN {FS = ":.*?@ "}; {printf "\033[32m%-18s\033[0m - %s\n", $$1, $$2}'
+	@grep -E '[a-zA-Z\.\-]+:.*?@ .*$$' $(MAKEFILE_LIST)| tr -d '#' | awk 'BEGIN {FS = ":.*?@ "}; {printf "\033[32m%-25s\033[0m - %s\n", $$1, $$2}'
 
 #deps: @ Check that required tools (java, mvn) are installed
 deps:
@@ -54,7 +54,7 @@ deps-act: deps
 	}
 
 #env-check: @ Check installed tools
-env-check: deps-install
+env-check: deps
 	@printf "\xE2\x9C\x94 sdkman\n"
 
 #clean: @ Cleanup
@@ -129,6 +129,7 @@ maven-settings-ossindex:
 
 #renovate-validate: @ Validate Renovate configuration
 renovate-validate:
+	@[ -f renovate.json ] || { echo "Error: renovate.json not found"; exit 1; }
 	@npx --yes renovate --platform=local
 
 #deps-updates: @ Print project dependencies updates

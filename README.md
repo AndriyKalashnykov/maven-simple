@@ -94,6 +94,7 @@ Run `make help` to see all available targets.
 | Target | Description |
 |--------|-------------|
 | `make env-check` | Check installed tools |
+| `make maven-settings-ossindex` | Create Maven settings for OSS Index credentials |
 | `make release VERSION=x.y.z` | Create a release |
 | `make renovate-validate` | Validate Renovate configuration |
 | `make help` | List available tasks |
