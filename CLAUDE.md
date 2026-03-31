@@ -14,6 +14,7 @@ make deps               # Check that required tools (java, mvn) are installed
 make deps-maven         # Install Maven if not present (for CI containers)
 make deps-install       # Install Java and Maven via SDKMAN
 make deps-act           # Install act for local CI
+make deps-check         # Show required tools and installation status
 make build              # Build project (skips tests and OWASP dependency-check)
 make test               # Run all tests
 make lint               # Validate project configuration
@@ -26,8 +27,8 @@ make coverage-open      # Open code coverage report
 make cve-check          # OWASP CVE scan (slow, not part of normal workflow)
 make deps-updates       # Print available dependency updates
 make deps-update        # Update dependencies to latest releases
-make env-check          # Check installed tools
 make release VERSION=x.y.z  # Tag and push a release
+make renovate-bootstrap # Install nvm and npm for Renovate
 make renovate-validate  # Validate Renovate configuration
 
 # Run a single test class (raw mvn)

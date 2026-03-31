@@ -68,6 +68,7 @@ Run `make help` to see all available targets.
 | `make deps-maven` | Install Maven if not present (for CI containers) |
 | `make deps-install` | Install Java and Maven via SDKMAN |
 | `make deps-act` | Install act for local CI |
+| `make deps-check` | Show required tools and installation status |
 | `make deps-updates` | Print project dependencies updates |
 | `make deps-update` | Update project dependencies to latest releases |
 
@@ -75,9 +76,9 @@ Run `make help` to see all available targets.
 
 | Target | Description |
 |--------|-------------|
-| `make env-check` | Check installed tools |
 | `make maven-settings-ossindex` | Create Maven settings for OSS Index credentials |
 | `make release VERSION=x.y.z` | Create a release |
+| `make renovate-bootstrap` | Install nvm and npm for Renovate |
 | `make renovate-validate` | Validate Renovate configuration |
 | `make help` | List available tasks |
 

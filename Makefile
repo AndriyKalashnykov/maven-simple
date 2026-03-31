@@ -10,6 +10,7 @@ SDKMAN     := $${SDKMAN_DIR:-$$HOME/.sdkman}/bin/sdkman-init.sh
 JAVA_VER    := 21-tem
 MAVEN_VER   := 3.9.9
 ACT_VERSION      := 0.2.86
+NVM_VERSION      := 0.40.4
 RENOVATE_VERSION := 43.101.2
 
 # Detect macOS for 'open' vs 'xdg-open'
@@ -54,9 +55,15 @@ deps-act: deps
 		curl -sSfL https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash -s -- -b /usr/local/bin v$(ACT_VERSION); \
 	}
 
-#env-check: @ Check installed tools
-env-check: deps
-	@printf "\xE2\x9C\x94 sdkman\n"
+#deps-check: @ Show required tools and installation status
+deps-check:
+	@echo "--- Tool status ---"
+	@for tool in java mvn node act; do \
+		printf "  %-16s " "$$tool:"; \
+		command -v $$tool >/dev/null 2>&1 && echo "installed" || echo "NOT installed"; \
+	done
+	@echo "--- SDKMAN ---"
+	@[ -f "$(SDKMAN)" ] && echo "  installed" || echo "  NOT installed (run: make deps-install)"
 
 #clean: @ Cleanup
 clean: deps
@@ -80,8 +87,10 @@ ci: deps lint coverage-generate coverage-check build
 
 #ci-run: @ Run GitHub Actions workflow locally using act
 ci-run: deps-act
-	@act push --container-architecture linux/amd64 \
+	@act push -W .github/workflows/ci.yml \
+		--container-architecture linux/amd64 \
 		--artifact-server-path /tmp/act-artifacts \
+		--var ACT=true \
 		$(if $(NVD_API_KEY),--secret NVD_API_KEY=$(NVD_API_KEY)) \
 		$(if $(OSS_INDEX_USER),--secret OSS_INDEX_USER=$(OSS_INDEX_USER)) \
 		$(if $(OSS_INDEX_TOKEN),--secret OSS_INDEX_TOKEN=$(OSS_INDEX_TOKEN))
@@ -128,8 +137,17 @@ maven-settings-ossindex:
 	@mkdir -p ~/.m2 && \
 	printf '<settings>\n  <servers>\n    <server>\n      <id>ossindex</id>\n      <username>$${env.OSS_INDEX_USER}</username>\n      <password>$${env.OSS_INDEX_TOKEN}</password>\n    </server>\n  </servers>\n</settings>\n' > ~/.m2/settings.xml
 
+#renovate-bootstrap: @ Install nvm and npm for Renovate
+renovate-bootstrap:
+	@command -v node >/dev/null 2>&1 || { \
+		echo "Installing nvm $(NVM_VERSION)..."; \
+		export NVM_DIR="$${NVM_DIR:-$$HOME/.nvm}"; \
+		curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v$(NVM_VERSION)/install.sh | bash; \
+		. "$$NVM_DIR/nvm.sh" && nvm install --lts; \
+	}
+
 #renovate-validate: @ Validate Renovate configuration
-renovate-validate:
+renovate-validate: renovate-bootstrap
 	@[ -f renovate.json ] || { echo "Error: renovate.json not found"; exit 1; }
 	@npx --yes renovate@$(RENOVATE_VERSION) --platform=local
 
@@ -142,7 +160,7 @@ deps-update: deps-updates
 	@mvn -B versions:use-latest-releases
 	@mvn -B versions:commit
 
-.PHONY: help deps deps-maven deps-install deps-act deps-updates deps-update \
-	env-check clean build test lint ci ci-run release \
+.PHONY: help deps deps-maven deps-install deps-act deps-check deps-updates deps-update \
+	clean build test lint ci ci-run release \
 	cve-check coverage-generate coverage-check coverage-open \
-	maven-settings-ossindex renovate-validate
+	maven-settings-ossindex renovate-bootstrap renovate-validate
