@@ -1,7 +1,7 @@
 package jsonparse.databinding.compex.gson;
 
 import jsonparse.databinding.complex.gson.ComplexDataBindingGson;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

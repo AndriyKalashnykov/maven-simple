@@ -5,7 +5,7 @@
 
 # Maven Simple
 
-Educational Java 21 project demonstrating HTTP client implementations and JSON parsing techniques using NASA's Near-Earth Objects (NEO) API data. Built with Maven and tested with JUnit 4.
+Educational Java 21 project demonstrating HTTP client implementations and JSON parsing techniques using NASA's Near-Earth Objects (NEO) API data. Built with Maven and tested with JUnit 5.
 
 ## Quick Start
 
