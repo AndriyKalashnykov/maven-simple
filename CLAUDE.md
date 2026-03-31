@@ -54,6 +54,7 @@ JUnit 4 tests in `src/test/java/` mirror the main source structure. Tests typica
 
 - **pom.xml** — maven-enforcer-plugin requires Maven 3+ and Java 11+; JaCoCo 70% threshold; OWASP dependency-check bound to build lifecycle (skip with `-Ddependency-check.skip=true`)
 - **renovate.json** — Automated dependency PRs with automerge on all update types
+- **CI pipeline** — Multi-job: `lint` (+ Trivy SAST) → `tests` + `builds` (parallel); `cve-check` on push to main
 
 ## Skills
 

@@ -139,7 +139,11 @@ GitHub Actions runs on every push to `main`, tags `v*`, and pull requests.
 
 | Job | Triggers | Steps |
 |-----|----------|-------|
-| **ci** | push, PR, tags | Lint, Test with coverage, Build |
+| **lint** | push, PR, tags | Lint, Trivy filesystem scan (CRITICAL/HIGH + MEDIUM informational) |
+| **tests** | after lint | Test with coverage, verify threshold (>70%) |
+| **builds** | after lint | Build project |
 | **cve-check** | push to main | OWASP dependency vulnerability scan |
+
+Pipeline: `lint` → `tests` + `builds` (parallel) — fail-fast with security scanning as gate.
 
 [Renovate](https://docs.renovatebot.com/) keeps dependencies up to date with platform automerge enabled.
