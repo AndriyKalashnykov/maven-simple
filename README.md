@@ -31,24 +31,6 @@ Install all required dependencies:
 make deps
 ```
 
-## [HTTP Clients in Java](https://github.com/AndriyKalashnykov/maven-simple/tree/main/src/main/java/http/client)
-
-Core Java:
-* [HttpURLConnection](https://www.javatpoint.com/java-http-url-connection)
-* [HttpClient](https://openjdk.java.net/groups/net/httpclient/intro.html)
-
-Popular Libraries:
-* [ApacheHttpClient](https://mkyong.com/java/apache-httpclient-examples/)
-* [OkHttp](https://www.baeldung.com/guide-to-okhttp)
-* [Retrofit](https://www.baeldung.com/retrofit)
-
-## [JSON in Java](https://github.com/AndriyKalashnykov/maven-simple/tree/main/src/main/java/jsonparse/)
-
-Examples of how to work with JSON using:
-* [Jackson](https://github.com/FasterXML/jackson) — tree models, data binding (simple & complex), JsonPointer queries
-* [Gson](https://github.com/google/gson) — tree models, data binding (simple & complex)
-* [JsonPath](https://github.com/json-path/JsonPath) — path-based queries
-
 ## Available Make Targets
 
 Run `make help` to see all available targets.
@@ -99,7 +81,25 @@ Run `make help` to see all available targets.
 | `make renovate-validate` | Validate Renovate configuration |
 | `make help` | List available tasks |
 
-### OWASP CVE Check
+## [HTTP Clients in Java](https://github.com/AndriyKalashnykov/maven-simple/tree/main/src/main/java/http/client)
+
+Core Java:
+* [HttpURLConnection](https://www.javatpoint.com/java-http-url-connection)
+* [HttpClient](https://openjdk.java.net/groups/net/httpclient/intro.html)
+
+Popular Libraries:
+* [ApacheHttpClient](https://mkyong.com/java/apache-httpclient-examples/)
+* [OkHttp](https://www.baeldung.com/guide-to-okhttp)
+* [Retrofit](https://www.baeldung.com/retrofit)
+
+## [JSON in Java](https://github.com/AndriyKalashnykov/maven-simple/tree/main/src/main/java/jsonparse/)
+
+Examples of how to work with JSON using:
+* [Jackson](https://github.com/FasterXML/jackson) — tree models, data binding (simple & complex), JsonPointer queries
+* [Gson](https://github.com/google/gson) — tree models, data binding (simple & complex)
+* [JsonPath](https://github.com/json-path/JsonPath) — path-based queries
+
+## OWASP CVE Check
 
 `make cve-check` scans dependencies for known vulnerabilities using two data sources:
 

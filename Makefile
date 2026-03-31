@@ -9,7 +9,8 @@ SDKMAN     := $${SDKMAN_DIR:-$$HOME/.sdkman}/bin/sdkman-init.sh
 # === Tool Versions (pinned) ===
 JAVA_VER    := 21-tem
 MAVEN_VER   := 3.9.9
-ACT_VERSION := 0.2.86
+ACT_VERSION      := 0.2.86
+RENOVATE_VERSION := 43.101.2
 
 # Detect macOS for 'open' vs 'xdg-open'
 OPEN_CMD := $(if $(filter Darwin,$(shell uname -s)),open,xdg-open)
@@ -119,7 +120,7 @@ coverage-check: deps
 	@mvn -B jacoco:check -Ddependency-check.skip=true
 
 #coverage-open: @ Open code coverage report
-coverage-open:
+coverage-open: deps
 	@$(OPEN_CMD) ./target/site/jacoco/index.html
 
 #maven-settings-ossindex: @ Create Maven settings for OSS Index credentials
@@ -130,7 +131,7 @@ maven-settings-ossindex:
 #renovate-validate: @ Validate Renovate configuration
 renovate-validate:
 	@[ -f renovate.json ] || { echo "Error: renovate.json not found"; exit 1; }
-	@npx --yes renovate --platform=local
+	@npx --yes renovate@$(RENOVATE_VERSION) --platform=local
 
 #deps-updates: @ Print project dependencies updates
 deps-updates: deps
