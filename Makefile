@@ -9,7 +9,7 @@ SDKMAN     := $${SDKMAN_DIR:-$$HOME/.sdkman}/bin/sdkman-init.sh
 # === Tool Versions (pinned) ===
 JAVA_VER    := 21-tem
 MAVEN_VER   := 3.9.9
-ACT_VERSION      := 0.2.86
+ACT_VERSION      := 0.2.87
 NVM_VERSION      := 0.40.4
 RENOVATE_VERSION := 43.101.2
 
