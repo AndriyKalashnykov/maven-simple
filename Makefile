@@ -8,10 +8,11 @@ SDKMAN     := $${SDKMAN_DIR:-$$HOME/.sdkman}/bin/sdkman-init.sh
 
 # === Tool Versions (pinned) ===
 JAVA_VER    := 21-tem
-MAVEN_VER   := 3.9.9
+MAVEN_VER   := 3.9.14
 ACT_VERSION      := 0.2.87
 NVM_VERSION      := 0.40.4
-RENOVATE_VERSION := 43.101.2
+NODE_VERSION     := 22
+RENOVATE_VERSION := 43.104.1
 
 # Detect macOS for 'open' vs 'xdg-open'
 OPEN_CMD := $(if $(filter Darwin,$(shell uname -s)),open,xdg-open)
@@ -23,7 +24,7 @@ SEMVER_RE := ^[0-9]+\.[0-9]+\.[0-9]+$$
 help:
 	@echo "Usage: make COMMAND"
 	@echo "Commands :"
-	@grep -E '[a-zA-Z\.\-]+:.*?@ .*$$' $(MAKEFILE_LIST)| tr -d '#' | awk 'BEGIN {FS = ":.*?@ "}; {printf "\033[32m%-25s\033[0m - %s\n", $$1, $$2}'
+	@grep -E '[a-zA-Z\.\-]+:.*?@ .*$$' $(MAKEFILE_LIST)| tr -d '#' | awk 'BEGIN {FS = ":.*?@ "}; {printf "\033[32m%-30s\033[0m - %s\n", $$1, $$2}'
 
 #deps: @ Check that required tools (java, mvn) are installed
 deps:
@@ -82,7 +83,7 @@ lint: deps
 	@mvn -B validate -Ddependency-check.skip=true
 
 #ci: @ Run full CI pipeline (lint, test, coverage, build)
-ci: deps lint coverage-generate coverage-check build
+ci: deps lint test coverage-generate coverage-check build
 	@echo "=== CI Complete ==="
 
 #ci-run: @ Run GitHub Actions workflow locally using act
@@ -102,7 +103,7 @@ release: deps
 		exit 1; \
 	fi
 	@if ! echo "$(VERSION)" | grep -qE '$(SEMVER_RE)'; then \
-		echo "Error: VERSION must be valid semver (e.g., 1.0.0)"; \
+		echo "Error: VERSION must be valid semver (e.g., 1.0.0 → creates tag v1.0.0)"; \
 		exit 1; \
 	fi
 	@echo "Releasing version $(VERSION) (current: $(CURRENTTAG))..."
@@ -143,7 +144,7 @@ renovate-bootstrap:
 		echo "Installing nvm $(NVM_VERSION)..."; \
 		export NVM_DIR="$${NVM_DIR:-$$HOME/.nvm}"; \
 		curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v$(NVM_VERSION)/install.sh | bash; \
-		. "$$NVM_DIR/nvm.sh" && nvm install --lts; \
+		. "$$NVM_DIR/nvm.sh" && nvm install $(NODE_VERSION); \
 	}
 
 #renovate-validate: @ Validate Renovate configuration

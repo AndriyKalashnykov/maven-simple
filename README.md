@@ -13,6 +13,7 @@ Educational Java 21 project demonstrating HTTP client implementations and JSON p
 make deps      # verify Java and Maven are installed
 make build     # build the project
 make test      # run all tests
+make ci        # or run the full CI pipeline
 ```
 
 ## Prerequisites
@@ -77,7 +78,7 @@ Run `make help` to see all available targets.
 | Target | Description |
 |--------|-------------|
 | `make maven-settings-ossindex` | Create Maven settings for OSS Index credentials |
-| `make release VERSION=x.y.z` | Create a release |
+| `make release VERSION=x.y.z` | Create a release (usage: make release VERSION=x.y.z) |
 | `make renovate-bootstrap` | Install nvm and npm for Renovate |
 | `make renovate-validate` | Validate Renovate configuration |
 | `make help` | List available tasks |
@@ -144,6 +145,6 @@ GitHub Actions runs on every push to `main`, tags `v*`, and pull requests.
 | **builds** | after lint | Build project |
 | **cve-check** | push to main | OWASP dependency vulnerability scan |
 
-Pipeline: `lint` → `tests` + `builds` (parallel) — fail-fast with security scanning as gate.
+Pipeline: `lint` → `tests` + `builds` (parallel); `cve-check` runs independently on push to main (after lint).
 
 [Renovate](https://docs.renovatebot.com/) keeps dependencies up to date with platform automerge enabled.

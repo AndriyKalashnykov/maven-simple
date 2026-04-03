@@ -1,8 +1,7 @@
 package jsonparse.databinding.simple;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import tools.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
@@ -25,8 +24,7 @@ class NeoSummary {
 
     private static void jacksonDataBinding() throws IOException {
 
-        ObjectMapper objectMapper = new ObjectMapper()
-                .registerModule(new JavaTimeModule());
+        ObjectMapper objectMapper = new ObjectMapper();
 
         NeoSummaryDetails neoSummaryDetails = objectMapper
                 .readValue(neoSummaryJsonString, NeoSummaryDetails.class);

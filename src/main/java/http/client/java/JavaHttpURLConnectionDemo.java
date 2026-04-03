@@ -1,6 +1,6 @@
 package http.client.java;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import http.client.model.Page;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

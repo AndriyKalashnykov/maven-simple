@@ -6,7 +6,8 @@
   ],
   "enabledManagers": [
     "maven",
-    "github-actions"
+    "github-actions",
+    "custom.regex"
   ],
   "commitMessagePrefix": "chore(all): ",
   "commitMessageAction": "update",
@@ -31,6 +32,7 @@
   "customManagers": [
     {
       "customType": "regex",
+      "description": "Track Java version in Makefile",
       "managerFilePatterns": [
         "/^Makefile$/"
       ],
@@ -38,10 +40,12 @@
         "JAVA_VER\\s*:=\\s*(?<currentValue>.*?)\\n"
       ],
       "depNameTemplate": "java",
-      "datasourceTemplate": "adoptium-java"
+      "datasourceTemplate": "adoptium-java",
+      "extractVersionTemplate": "^(?<version>\\d+)"
     },
     {
       "customType": "regex",
+      "description": "Track act version in Makefile",
       "managerFilePatterns": [
         "/^Makefile$/"
       ],
@@ -49,7 +53,46 @@
         "ACT_VERSION\\s*:=\\s*(?<currentValue>.*?)\\n"
       ],
       "depNameTemplate": "nektos/act",
-      "datasourceTemplate": "github-releases"
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "^v(?<version>.*)$"
+    },
+    {
+      "customType": "regex",
+      "description": "Track Maven version in Makefile",
+      "managerFilePatterns": [
+        "/^Makefile$/"
+      ],
+      "matchStrings": [
+        "MAVEN_VER\\s*:=\\s*(?<currentValue>.*?)\\n"
+      ],
+      "depNameTemplate": "org.apache.maven:apache-maven",
+      "datasourceTemplate": "maven"
+    },
+    {
+      "customType": "regex",
+      "description": "Track nvm version in Makefile",
+      "managerFilePatterns": [
+        "/^Makefile$/"
+      ],
+      "matchStrings": [
+        "NVM_VERSION\\s*:=\\s*(?<currentValue>.*?)\\n"
+      ],
+      "depNameTemplate": "nvm-sh/nvm",
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "^v(?<version>.*)$"
+    },
+    {
+      "customType": "regex",
+      "description": "Track Renovate version in Makefile",
+      "managerFilePatterns": [
+        "/^Makefile$/"
+      ],
+      "matchStrings": [
+        "RENOVATE_VERSION\\s*:=\\s*(?<currentValue>.*?)\\n"
+      ],
+      "depNameTemplate": "renovatebot/renovate",
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "^v(?<version>.*)$"
     }
   ],
   "packageRules": [
@@ -77,14 +120,22 @@
       "groupName": "GitHub Actions"
     },
     {
-      "description": "Group Jackson dependencies",
+      "description": "Group Makefile tool versions into one PR",
+      "matchManagers": [
+        "custom.regex"
+      ],
+      "groupName": "Makefile tool versions"
+    },
+    {
+      "description": "Group Jackson 3.x dependencies",
       "groupName": "Jackson",
       "matchPackageNames": [
-        "/^com\\.fasterxml\\.jackson/"
+        "/^tools\\.jackson/",
+        "/^com\\.fasterxml\\.jackson\\.annotation/"
       ]
     },
     {
-      "description": "Group OkHttp dependencies",
+      "description": "Group OkHttp dependencies (including KMP -jvm artifacts)",
       "groupName": "OkHttp",
       "matchPackageNames": [
         "/^com\\.squareup\\.okhttp3/"

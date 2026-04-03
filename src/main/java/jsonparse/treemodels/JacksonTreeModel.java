@@ -1,7 +1,7 @@
 package jsonparse.treemodels;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import jsonparse.SourceData;
 
 import java.io.IOException;
@@ -59,7 +59,7 @@ public class JacksonTreeModel {
                         .get("kilometers_per_second")
                         .asDouble();
                 if (fastestNEO == null || speed > fastestNEO.speed) {
-                    fastestNEO = new NeoNameAndSpeed(neo.get("name").asText(), speed);
+                    fastestNEO = new NeoNameAndSpeed(neo.get("name").asString(), speed);
                 }
             }
         }

@@ -6,6 +6,7 @@ on:
     tags: ['v*']
   pull_request:
   workflow_call:
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -79,6 +80,7 @@ jobs:
       - name: Upload coverage report
         if: always()
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
+        continue-on-error: true
         with:
           name: coverage-report
           path: target/site/jacoco/
@@ -106,6 +108,7 @@ jobs:
         run: make build
 
   cve-check:
+    needs: [lint]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -137,6 +140,7 @@ jobs:
       - name: Upload CVE report
         if: always()
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
+        continue-on-error: true
         with:
           name: cve-report
           path: target/dependency-check-report.html

@@ -1,6 +1,6 @@
 package http.client.okhttp;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import http.client.model.Page;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;

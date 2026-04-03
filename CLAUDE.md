@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Educational Java project demonstrating HTTP client implementations and JSON parsing techniques using NASA's Near-Earth Objects (NEO) API data. Java 21, Maven, JUnit 5.
+Educational Java project demonstrating HTTP client implementations and JSON parsing techniques using NASA's Near-Earth Objects (NEO) API data. Java 21, Maven, Jackson 3.x, Gson, JUnit 5.
 
 ## Build & Test Commands
 
@@ -30,6 +30,7 @@ make deps-update        # Update dependencies to latest releases
 make release VERSION=x.y.z  # Tag and push a release
 make renovate-bootstrap # Install nvm and npm for Renovate
 make renovate-validate  # Validate Renovate configuration
+make maven-settings-ossindex  # Create Maven settings for OSS Index credentials
 
 # Run a single test class (raw mvn)
 mvn -B test -Dtest=ClassName -Ddependency-check.skip=true
@@ -39,7 +40,7 @@ mvn -B test -Dtest=ClassName -Ddependency-check.skip=true
 
 Two independent module areas under `src/main/java/`:
 
-- **`http/client/`** — Five HTTP client implementations (Java HttpURLConnection, Java HttpClient, Apache HttpClient 5, OkHttp3, Retrofit) with shared models in `model/`
+- **`http/client/`** — Five HTTP client implementations (Java HttpURLConnection, Java HttpClient, Apache HttpClient 5, OkHttp3, Retrofit with Gson converter) with shared models in `model/`
 - **`jsonparse/`** — JSON processing examples organized by approach:
   - `treemodels/` — DOM-style parsing (Jackson JsonNode, Gson JsonElement)
   - `databinding/simple/` — POJO mapping with Jackson and Gson
@@ -52,7 +53,7 @@ JUnit 5 tests in `src/test/java/` mirror the main source structure. Tests typica
 
 ## Key Config
 
-- **pom.xml** — maven-enforcer-plugin requires Maven 3+ and Java 11+; JaCoCo 70% threshold; OWASP dependency-check bound to build lifecycle (skip with `-Ddependency-check.skip=true`)
+- **pom.xml** — maven-enforcer-plugin requires Maven 3.6.3+ and Java 21+; JaCoCo 70% threshold; compiler `failOnWarning` enabled; Jackson 3.x (`tools.jackson.core`); OWASP dependency-check bound to build lifecycle (skip with `-Ddependency-check.skip=true`)
 - **renovate.json** — Automated dependency PRs with automerge on all update types
 - **CI pipeline** — Multi-job: `lint` (+ Trivy SAST) → `tests` + `builds` (parallel); `cve-check` on push to main
 

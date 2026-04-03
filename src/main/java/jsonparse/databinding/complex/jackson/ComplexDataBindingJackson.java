@@ -1,8 +1,6 @@
 package jsonparse.databinding.complex.jackson;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import tools.jackson.databind.ObjectMapper;
 import jsonparse.SourceData;
 import jsonparse.databinding.complex.jackson.generated.NeoDetails;
 import jsonparse.databinding.complex.jackson.generated.NeoWsDataJackson;
@@ -12,9 +10,8 @@ import java.util.Comparator;
 
 public class ComplexDataBindingJackson {
 
-    public static void main(String[] args) throws JsonProcessingException {
+    public static void main(String[] args) {
         NeoWsDataJackson neoWsDataJackson = new ObjectMapper()
-                .registerModule(new JavaTimeModule())
                 .readValue(SourceData.asString(), NeoWsDataJackson.class);
 
 
