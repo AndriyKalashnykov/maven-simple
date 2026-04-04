@@ -12,9 +12,8 @@ public class SourceData {
     public static final String SOURCE_JSON = "source.json";
 
     public static String asString() {
-        try {
-            Stream<String> lines = Files.lines(
-                    Paths.get(ClassLoader.getSystemResource(SOURCE_JSON).toURI()));
+        try (Stream<String> lines = Files.lines(
+                Paths.get(ClassLoader.getSystemResource(SOURCE_JSON).toURI()))) {
 
             return lines.collect(Collectors.joining());
 
