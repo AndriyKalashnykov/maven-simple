@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Educational Java project demonstrating HTTP client implementations and JSON parsing techniques using NASA's Near-Earth Objects (NEO) API data. Java 21, Maven, Jackson 3.x, Gson, JUnit 5.
+Educational Java project demonstrating HTTP client implementations and JSON parsing techniques using NASA's Near-Earth Objects (NEO) API data. Java 21, Maven, Jackson 3.x, Gson, JUnit 6.
 
 ## Build & Test Commands
 
@@ -49,7 +49,7 @@ Two independent module areas under `src/main/java/`:
 
 ## Testing
 
-JUnit 5 tests in `src/test/java/` mirror the main source structure. Tests typically invoke `main()` methods of example classes. Coverage enforced at 70% via JaCoCo plugin (`jacoco:check`).
+JUnit 6 tests in `src/test/java/` mirror the main source structure. Tests typically invoke `main()` methods of example classes. Coverage enforced at 70% via JaCoCo plugin (`jacoco:check`).
 
 ## Key Config
 

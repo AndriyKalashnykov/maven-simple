@@ -7,6 +7,8 @@ on:
 
 permissions:
   actions: write
+  contents: read
+  packages: write
 
 jobs:
   cleanup:
@@ -24,3 +26,18 @@ jobs:
             --json databaseId,createdAt --limit 200 \
             --jq "sort_by(.createdAt) | reverse | .[$KEEP_MINIMUM:] | .[] | select(.createdAt < \\"$CUTOFF\\") | .databaseId" \
           | xargs -r -I{} gh run delete {} --repo "${{ github.repository }}"
+
+      - name: Delete untagged container images
+        run: |
+          PACKAGE_NAME="${{ github.event.repository.name }}"
+          OWNER="${{ github.repository_owner }}"
+          # List all package versions, filter untagged ones, delete them
+          gh api \
+            -H "Accept: application/vnd.github+json" \
+            "/users/$OWNER/packages/container/$PACKAGE_NAME/versions" \
+            --paginate --jq '.[] | select(.metadata.container.tags | length == 0) | .id' 2>/dev/null \
+          | xargs -r -I{} gh api \
+            --method DELETE \
+            -H "Accept: application/vnd.github+json" \
+            "/users/$OWNER/packages/container/$PACKAGE_NAME/versions/{}" 2>/dev/null \
+          || echo "No container packages found or nothing to clean up"

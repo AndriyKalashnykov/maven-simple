@@ -93,6 +93,18 @@
       "depNameTemplate": "renovatebot/renovate",
       "datasourceTemplate": "github-releases",
       "extractVersionTemplate": "^v(?<version>.*)$"
+    },
+    {
+      "customType": "regex",
+      "description": "Track Node.js version in Makefile",
+      "managerFilePatterns": [
+        "/^Makefile$/"
+      ],
+      "matchStrings": [
+        "NODE_VERSION\\s*:=\\s*(?<currentValue>.*?)\\n"
+      ],
+      "depNameTemplate": "node",
+      "datasourceTemplate": "node-version"
     }
   ],
   "packageRules": [
@@ -153,6 +165,30 @@
       "groupName": "SLF4J",
       "matchPackageNames": [
         "/^org\\.slf4j/"
+      ]
+    },
+    {
+      "description": "Group Apache Commons dependencies",
+      "groupName": "Apache Commons",
+      "matchPackageNames": [
+        "/^org\\.apache\\.commons/",
+        "/^commons-/"
+      ]
+    },
+    {
+      "description": "Group testing dependencies",
+      "groupName": "Testing",
+      "matchPackageNames": [
+        "/^org\\.junit/",
+        "/^org\\.mockito/"
+      ]
+    },
+    {
+      "description": "Group Maven plugin dependencies",
+      "groupName": "Maven Plugins",
+      "matchPackageNames": [
+        "/^org\\.apache\\.maven\\.plugins/",
+        "/^org\\.codehaus\\.mojo/"
       ]
     }
   ]

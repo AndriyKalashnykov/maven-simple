@@ -68,7 +68,7 @@ deps-check:
 
 #clean: @ Cleanup
 clean: deps
-	@mvn clean -q
+	@mvn -B clean -q
 
 #build: @ Build project
 build: deps

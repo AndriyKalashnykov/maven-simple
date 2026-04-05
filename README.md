@@ -5,7 +5,7 @@
 
 # Maven Simple
 
-Educational Java 21 project demonstrating HTTP client implementations and JSON parsing techniques using NASA's Near-Earth Objects (NEO) API data. Built with Maven and tested with JUnit 5.
+Educational Java 21 project demonstrating HTTP client implementations and JSON parsing techniques using NASA's Near-Earth Objects (NEO) API data. Built with Maven and tested with JUnit 6.
 
 ## Quick Start
 
@@ -21,6 +21,7 @@ make ci        # or run the full CI pipeline
 | Tool | Version | Purpose |
 |------|---------|---------|
 | [GNU Make](https://www.gnu.org/software/make/) | 3.81+ | Build orchestration |
+| [Git](https://git-scm.com/) | 2.0+ | Version control, releases |
 | [JDK](https://adoptium.net/) | 21+ | Java runtime and compiler |
 | [Maven](https://maven.apache.org/) | 3.9+ | Build and dependency management |
 | [SDKMAN](https://sdkman.io/) | latest | Java/Maven version management (optional) |
@@ -136,14 +137,14 @@ The NVD key is passed to Maven automatically via the Makefile. OSS Index credent
 
 ## CI/CD
 
-GitHub Actions runs on every push to `main`, tags `v*`, and pull requests.
+GitHub Actions runs on every push to `main`, tags `v*`, and pull requests. The workflow also supports manual dispatch and reusable workflow calls.
 
 | Job | Triggers | Steps |
 |-----|----------|-------|
 | **lint** | push, PR, tags | Lint, Trivy filesystem scan (CRITICAL/HIGH + MEDIUM informational) |
 | **tests** | after lint | Test with coverage, verify threshold (>70%) |
 | **builds** | after lint | Build project |
-| **cve-check** | push to main | OWASP dependency vulnerability scan |
+| **cve-check** | push to main (after lint) | OWASP dependency vulnerability scan |
 
 Pipeline: `lint` → `tests` + `builds` (parallel); `cve-check` runs independently on push to main (after lint).
 
