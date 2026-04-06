@@ -8,11 +8,15 @@ SDKMAN     := $${SDKMAN_DIR:-$$HOME/.sdkman}/bin/sdkman-init.sh
 
 # === Tool Versions (pinned) ===
 JAVA_VER    := 21-tem
+# renovate: datasource=maven depName=org.apache.maven:apache-maven
 MAVEN_VER   := 3.9.14
+# renovate: datasource=github-releases depName=nektos/act extractVersion=^v(?<version>.*)$
 ACT_VERSION      := 0.2.87
+# renovate: datasource=github-releases depName=nvm-sh/nvm extractVersion=^v(?<version>.*)$
 NVM_VERSION      := 0.40.4
 NODE_VERSION     := 22
-RENOVATE_VERSION := 43.104.1
+# renovate: datasource=github-releases depName=renovatebot/renovate extractVersion=^v(?<version>.*)$
+RENOVATE_VERSION := 43.104.8
 
 # Detect macOS for 'open' vs 'xdg-open'
 OPEN_CMD := $(if $(filter Darwin,$(shell uname -s)),open,xdg-open)
@@ -78,12 +82,13 @@ build: deps
 test: deps
 	@mvn -B test -Ddependency-check.skip=true
 
-#lint: @ Validate project configuration
+#lint: @ Validate project configuration and check compiler warnings
 lint: deps
 	@mvn -B validate -Ddependency-check.skip=true
+	@mvn -B compile -Dmaven.compiler.failOnWarning=true -Ddependency-check.skip=true -q
 
 #ci: @ Run full CI pipeline (lint, test, coverage, build)
-ci: deps lint test coverage-generate coverage-check build
+ci: deps lint coverage-generate coverage-check build
 	@echo "=== CI Complete ==="
 
 #ci-run: @ Run GitHub Actions workflow locally using act

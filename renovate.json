@@ -32,79 +32,11 @@
   "customManagers": [
     {
       "customType": "regex",
-      "description": "Track Java version in Makefile",
-      "managerFilePatterns": [
-        "/^Makefile$/"
-      ],
+      "description": "Update Makefile tool versions via inline renovate comments",
+      "managerFilePatterns": ["/^Makefile$/"],
       "matchStrings": [
-        "JAVA_VER\\s*:=\\s*(?<currentValue>.*?)\\n"
-      ],
-      "depNameTemplate": "java",
-      "datasourceTemplate": "adoptium-java",
-      "extractVersionTemplate": "^(?<version>\\d+)"
-    },
-    {
-      "customType": "regex",
-      "description": "Track act version in Makefile",
-      "managerFilePatterns": [
-        "/^Makefile$/"
-      ],
-      "matchStrings": [
-        "ACT_VERSION\\s*:=\\s*(?<currentValue>.*?)\\n"
-      ],
-      "depNameTemplate": "nektos/act",
-      "datasourceTemplate": "github-releases",
-      "extractVersionTemplate": "^v(?<version>.*)$"
-    },
-    {
-      "customType": "regex",
-      "description": "Track Maven version in Makefile",
-      "managerFilePatterns": [
-        "/^Makefile$/"
-      ],
-      "matchStrings": [
-        "MAVEN_VER\\s*:=\\s*(?<currentValue>.*?)\\n"
-      ],
-      "depNameTemplate": "org.apache.maven:apache-maven",
-      "datasourceTemplate": "maven"
-    },
-    {
-      "customType": "regex",
-      "description": "Track nvm version in Makefile",
-      "managerFilePatterns": [
-        "/^Makefile$/"
-      ],
-      "matchStrings": [
-        "NVM_VERSION\\s*:=\\s*(?<currentValue>.*?)\\n"
-      ],
-      "depNameTemplate": "nvm-sh/nvm",
-      "datasourceTemplate": "github-releases",
-      "extractVersionTemplate": "^v(?<version>.*)$"
-    },
-    {
-      "customType": "regex",
-      "description": "Track Renovate version in Makefile",
-      "managerFilePatterns": [
-        "/^Makefile$/"
-      ],
-      "matchStrings": [
-        "RENOVATE_VERSION\\s*:=\\s*(?<currentValue>.*?)\\n"
-      ],
-      "depNameTemplate": "renovatebot/renovate",
-      "datasourceTemplate": "github-releases",
-      "extractVersionTemplate": "^v(?<version>.*)$"
-    },
-    {
-      "customType": "regex",
-      "description": "Track Node.js version in Makefile",
-      "managerFilePatterns": [
-        "/^Makefile$/"
-      ],
-      "matchStrings": [
-        "NODE_VERSION\\s*:=\\s*(?<currentValue>.*?)\\n"
-      ],
-      "depNameTemplate": "node",
-      "datasourceTemplate": "node-version"
+        "# renovate: datasource=(?<datasource>[^\\s]+) depName=(?<depName>[^\\s]+)( extractVersion=(?<extractVersion>[^\\s]+))?( versioning=(?<versioning>[^\\s]+))?\\n[A-Z_]+\\s*:=\\s*(?<currentValue>[^\\s]+)"
+      ]
     }
   ],
   "packageRules": [

@@ -19,7 +19,7 @@ make build              # Build project (skips tests and OWASP dependency-check)
 make test               # Run all tests
 make lint               # Validate project configuration
 make clean              # Cleanup
-make ci                 # Full CI pipeline (lint, test, coverage, build)
+make ci                 # Full CI pipeline (lint, coverage, build)
 make ci-run             # Run GitHub Actions workflow locally using act
 make coverage-generate  # Generate JaCoCo coverage report
 make coverage-check     # Verify coverage meets 70% threshold
@@ -66,6 +66,6 @@ Use the following skills when working on related files:
 | `Makefile` | `/makefile` |
 | `renovate.json` | `/renovate` |
 | `README.md` | `/readme` |
-| `.github/workflows/*.yml` | `/ci-workflow` |
+| `.github/workflows/*.{yml,yaml}` | `/ci-workflow` |
 
 When spawning subagents, always pass conventions from the respective skill into the agent's prompt.
