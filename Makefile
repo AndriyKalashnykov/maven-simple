@@ -4,10 +4,10 @@ APP_NAME   := maven-simple
 CURRENTTAG := $(shell git describe --tags --abbrev=0 2>/dev/null || echo "dev")
 
 SHELL      := /bin/bash
-SDKMAN     := $${SDKMAN_DIR:-$$HOME/.sdkman}/bin/sdkman-init.sh
 
 # === Tool Versions (pinned) ===
-JAVA_VER    := 21-tem
+# Java and Maven pins live in .mise.toml; MAVEN_VER here only backs the
+# deps-maven fallback used inside act/CI containers that lack mise.
 # renovate: datasource=maven depName=org.apache.maven:apache-maven
 MAVEN_VER   := 3.9.14
 # renovate: datasource=github-releases depName=nektos/act extractVersion=^v(?<version>.*)$
@@ -44,15 +44,17 @@ deps-maven:
 		ln -sf "/opt/apache-maven-$(MAVEN_VER)/bin/mvn" /usr/local/bin/mvn; \
 	}
 
-#deps-install: @ Install Java and Maven via SDKMAN
+#deps-install: @ Install Java and Maven via mise (reads .mise.toml)
 deps-install:
-	@if [ ! -f "$(SDKMAN)" ]; then \
-		echo "Installing SDKMAN..."; \
-		curl -s "https://get.sdkman.io?rcupdate=false" | bash; \
-	fi
-	@. $(SDKMAN) && \
-		echo N | sdk install java $(JAVA_VER) && sdk use java $(JAVA_VER) && \
-		echo N | sdk install maven $(MAVEN_VER) && sdk use maven $(MAVEN_VER)
+	@command -v mise >/dev/null 2>&1 || { \
+		echo "Installing mise..."; \
+		curl -fsSL https://mise.run | sh; \
+	}
+	@mise install
+	@echo ""
+	@echo "Tools installed. If this is a fresh install, activate mise in your shell:"
+	@echo "  bash: echo 'eval \"\$$(~/.local/bin/mise activate bash)\"' >> ~/.bashrc"
+	@echo "  zsh:  echo 'eval \"\$$(~/.local/bin/mise activate zsh)\"'  >> ~/.zshrc"
 
 #deps-act: @ Install act for local CI
 deps-act: deps
@@ -67,8 +69,8 @@ deps-check:
 		printf "  %-16s " "$$tool:"; \
 		command -v $$tool >/dev/null 2>&1 && echo "installed" || echo "NOT installed"; \
 	done
-	@echo "--- SDKMAN ---"
-	@[ -f "$(SDKMAN)" ] && echo "  installed" || echo "  NOT installed (run: make deps-install)"
+	@echo "--- mise ---"
+	@command -v mise >/dev/null 2>&1 && mise --version || echo "  NOT installed (run: make deps-install)"
 
 #clean: @ Cleanup
 clean: deps

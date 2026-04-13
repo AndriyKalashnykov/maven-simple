@@ -12,7 +12,7 @@ Educational Java project demonstrating HTTP client implementations and JSON pars
 make help               # List available tasks
 make deps               # Check that required tools (java, mvn) are installed
 make deps-maven         # Install Maven if not present (for CI containers)
-make deps-install       # Install Java and Maven via SDKMAN
+make deps-install       # Install Java and Maven via mise (reads .mise.toml)
 make deps-act           # Install act for local CI
 make deps-check         # Show required tools and installation status
 make build              # Build project (skips tests and OWASP dependency-check)

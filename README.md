@@ -24,7 +24,7 @@ make ci        # or run the full CI pipeline
 | [Git](https://git-scm.com/) | 2.0+ | Version control, releases |
 | [JDK](https://adoptium.net/) | 21+ | Java runtime and compiler |
 | [Maven](https://maven.apache.org/) | 3.9+ | Build and dependency management |
-| [SDKMAN](https://sdkman.io/) | latest | Java/Maven version management (optional) |
+| [mise](https://mise.jdx.dev/) | latest | Java/Maven version management (optional) |
 | [Docker](https://www.docker.com/) | latest | Local CI via [act](https://github.com/nektos/act) (optional) |
 
 Install all required dependencies:
@@ -68,7 +68,7 @@ Run `make help` to see all available targets.
 |--------|-------------|
 | `make deps` | Check that required tools (java, mvn) are installed |
 | `make deps-maven` | Install Maven if not present (for CI containers) |
-| `make deps-install` | Install Java and Maven via SDKMAN |
+| `make deps-install` | Install Java and Maven via mise (reads `.mise.toml`) |
 | `make deps-act` | Install act for local CI |
 | `make deps-check` | Show required tools and installation status |
 | `make deps-updates` | Print project dependencies updates |
