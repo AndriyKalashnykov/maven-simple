@@ -30,10 +30,24 @@ help:
 	@echo "Commands :"
 	@grep -E '[a-zA-Z\.\-]+:.*?@ .*$$' $(MAKEFILE_LIST)| tr -d '#' | awk 'BEGIN {FS = ":.*?@ "}; {printf "\033[32m%-30s\033[0m - %s\n", $$1, $$2}'
 
-#deps: @ Check that required tools (java, mvn) are installed
+#deps: @ Check required tools; auto-install mise (no root) and mise-pinned tools if missing
 deps:
-	@command -v java >/dev/null 2>&1 || { echo "Error: Java required. Run: make deps-install"; exit 1; }
-	@command -v mvn >/dev/null 2>&1 || { echo "Error: Maven required. Run: make deps-install"; exit 1; }
+	@# Auto-install mise if missing (no root; installs to ~/.local/bin). Skip in CI (setup-java handles it).
+	@if [ -z "$$CI" ] && ! command -v mise >/dev/null 2>&1; then \
+		echo "Installing mise (no root required, installs to ~/.local/bin)..."; \
+		curl -fsSL https://mise.run | sh; \
+		echo ""; \
+		echo "mise installed. Activate it in your shell, then re-run 'make deps':"; \
+		echo '  bash: echo '\''eval "$$(~/.local/bin/mise activate bash)"'\'' >> ~/.bashrc'; \
+		echo '  zsh:  echo '\''eval "$$(~/.local/bin/mise activate zsh)"''  >> ~/.zshrc'; \
+		exit 0; \
+	fi
+	@# Install Java/Maven pinned in .mise.toml (no-op if already installed).
+	@if [ -z "$$CI" ] && command -v mise >/dev/null 2>&1; then \
+		mise install; \
+	fi
+	@command -v java >/dev/null 2>&1 || mise exec -- command -v java >/dev/null 2>&1 || { echo "Error: Java required. Run: make deps-install"; exit 1; }
+	@command -v mvn  >/dev/null 2>&1 || mise exec -- command -v mvn  >/dev/null 2>&1 || { echo "Error: Maven required. Run: make deps-install"; exit 1; }
 	@echo "All required dependencies are available"
 
 #deps-maven: @ Install Maven if not present (for CI containers)
