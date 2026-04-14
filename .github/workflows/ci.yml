@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     tags: ['v*']
-    paths-ignore:
+    paths-ignore: &paths-ignore
       - '*.md'
       - '!CLAUDE.md'
       - 'docs/**'
@@ -19,20 +19,7 @@ on:
       - '**.gif'
       - '**.svg'
   pull_request:
-    paths-ignore:
-      - '*.md'
-      - '!CLAUDE.md'
-      - 'docs/**'
-      - 'specs/**'
-      - 'LICENSE'
-      - '.gitignore'
-      - '.claudeignore'
-      - '.claude/**'
-      - 'benchmarks/**'
-      - '**.png'
-      - '**.jpg'
-      - '**.gif'
-      - '**.svg'
+    paths-ignore: *paths-ignore
   workflow_call:
   workflow_dispatch:
 
@@ -45,7 +32,7 @@ permissions:
 
 jobs:
 
-  lint:
+  static-check:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -54,80 +41,61 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up JDK 21
+      - name: Set up JDK
         uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
         with:
-          java-version: 21
+          java-version-file: .java-version
           distribution: 'temurin'
           cache: 'maven'
 
       - name: Ensure Maven is installed
         run: make deps-maven
 
-      - name: Lint
-        run: make lint
+      - name: Static check
+        run: make static-check
 
-      - name: Trivy filesystem scan
-        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1 # 0.35.0
-        with:
-          scan-type: 'fs'
-          scanners: 'vuln,secret,misconfig'
-          severity: 'CRITICAL,HIGH'
-          exit-code: '1'
-
-      - name: Trivy filesystem scan (MEDIUM - informational)
-        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1 # 0.35.0
-        with:
-          scan-type: 'fs'
-          scanners: 'vuln,secret,misconfig'
-          severity: 'MEDIUM'
-          exit-code: '0'
-
-  tests:
-    needs: [lint]
+  test:
+    needs: [static-check]
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - name: Set up JDK 21
+      - name: Set up JDK
         uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
         with:
-          java-version: 21
+          java-version-file: .java-version
           distribution: 'temurin'
           cache: 'maven'
 
       - name: Ensure Maven is installed
         run: make deps-maven
 
-      - name: Test with coverage
-        run: make coverage-generate
+      - name: Test
+        run: make coverage-generate coverage-check
 
-      - name: Verify coverage threshold (>70%)
-        run: make coverage-check
-
-      - name: Upload coverage report
+      - name: Upload coverage
         if: always()
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
         continue-on-error: true
         with:
-          name: coverage-report
+          name: coverage
           path: target/site/jacoco/
           retention-days: 14
 
-  builds:
-    needs: [lint]
+  build:
+    needs: [static-check]
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - name: Set up JDK 21
+      - name: Set up JDK
         uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
         with:
-          java-version: 21
+          java-version-file: .java-version
           distribution: 'temurin'
           cache: 'maven'
 
@@ -137,34 +105,51 @@ jobs:
       - name: Build
         run: make build
 
-  cve-check:
-    needs: [lint]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+  integration-test:
+    needs: [static-check]
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - name: Set up JDK 21
+      - name: Set up JDK
         uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
         with:
-          java-version: 21
+          java-version-file: .java-version
           distribution: 'temurin'
           cache: 'maven'
 
       - name: Ensure Maven is installed
         run: make deps-maven
 
-      - name: Create Maven settings for OSS Index
-        run: make maven-settings-ossindex
+      - name: Integration test
+        run: make integration-test
+
+  cve-check:
+    needs: [static-check]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Set up JDK
+        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
+        with:
+          java-version-file: .java-version
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Ensure Maven is installed
+        run: make deps-maven
 
       - name: OWASP dependency check
         env:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
           OSS_INDEX_USER: ${{ secrets.OSS_INDEX_USER }}
           OSS_INDEX_TOKEN: ${{ secrets.OSS_INDEX_TOKEN }}
-          MAVEN_OPTS: '--add-modules jdk.incubator.vector'
         run: make cve-check
 
       - name: Upload CVE report
@@ -175,3 +160,18 @@ jobs:
           name: cve-report
           path: target/dependency-check-report.html
           retention-days: 14
+
+  ci-pass:
+    if: always()
+    needs: [static-check, test, integration-test, build, cve-check]
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Verify all jobs passed
+        run: |
+          if [[ "${{ contains(needs.*.result, 'failure') }}" == "true" ]] || \
+             [[ "${{ contains(needs.*.result, 'cancelled') }}" == "true" ]]; then
+            echo "One or more required jobs failed or were cancelled."
+            exit 1
+          fi
+          echo "All required jobs passed (or were skipped)."

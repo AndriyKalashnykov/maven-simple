@@ -4,31 +4,43 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Educational Java project demonstrating HTTP client implementations and JSON parsing techniques using NASA's Near-Earth Objects (NEO) API data. Java 21, Maven, Jackson 3.x, Gson, JUnit 6.
+Educational Java project demonstrating HTTP client implementations and JSON parsing techniques using NASA's Near-Earth Objects (NEO) API data. Java 25 LTS, Maven, Jackson 3.x, Gson, JUnit 6.
 
 ## Build & Test Commands
 
 ```bash
 make help               # List available tasks
-make deps               # Check that required tools (java, mvn) are installed
-make deps-maven         # Install Maven if not present (for CI containers)
+make deps               # Check tools; auto-install mise (no root) + mise-pinned Java/Maven
+make deps-maven         # Install Maven into ~/.local (CI fallback when setup-java is unavailable)
 make deps-install       # Install Java and Maven via mise (reads .mise.toml)
-make deps-act           # Install act for local CI
+make deps-act           # Install act into ~/.local/bin (no root)
+make deps-gitleaks      # Install gitleaks into ~/.local/bin
+make deps-trivy         # Install trivy into ~/.local/bin
 make deps-check         # Show required tools and installation status
 make build              # Build project (skips tests and OWASP dependency-check)
-make test               # Run all tests
-make lint               # Validate project configuration
+make test               # Run unit tests (fast)
+make integration-test   # Run integration tests (WireMock-stubbed HTTP clients; *IT.java)
+make lint               # Validate project configuration and check compiler warnings
+make format             # Format Java sources with google-java-format
+make format-check       # Verify Java sources are formatted
+make secrets            # Scan for hardcoded secrets (gitleaks)
+make trivy-fs           # Filesystem vulnerability/secret/misconfig scan
+make mermaid-lint       # Validate Mermaid diagrams (requires Docker)
+make static-check       # Composite fast quality gate (format-check + lint + secrets + trivy-fs + mermaid-lint)
 make clean              # Cleanup
-make ci                 # Full CI pipeline (lint, coverage, build)
+make ci                 # Full CI pipeline (static-check, test, coverage-check, build)
 make ci-run             # Run GitHub Actions workflow locally using act
 make coverage-generate  # Generate JaCoCo coverage report
 make coverage-check     # Verify coverage meets 70% threshold
 make coverage-open      # Open code coverage report
 make cve-check          # OWASP CVE scan (slow, not part of normal workflow)
+make vulncheck          # Alias for cve-check
 make deps-updates       # Print available dependency updates
 make deps-update        # Update dependencies to latest releases
+make deps-prune         # Analyze declared-but-unused / used-but-undeclared dependencies
+make deps-prune-check   # Fail build on declared-but-unused dependencies
 make release VERSION=x.y.z  # Tag and push a release
-make renovate-bootstrap # Install nvm and npm for Renovate
+make renovate-bootstrap # Install mise + Node for Renovate
 make renovate-validate  # Validate Renovate configuration
 make maven-settings-ossindex  # Create Maven settings for OSS Index credentials
 
@@ -49,13 +61,49 @@ Two independent module areas under `src/main/java/`:
 
 ## Testing
 
-JUnit 6 tests in `src/test/java/` mirror the main source structure. Tests typically invoke `main()` methods of example classes. Coverage enforced at 70% via JaCoCo plugin (`jacoco:check`).
+Three-layer test pyramid:
+
+| Layer | Target | Discovery | Runtime |
+|-------|--------|-----------|---------|
+| Unit | `make test` | `*Test.java` via `maven-surefire-plugin` | seconds |
+| Integration | `make integration-test` | `*IT.java` via `maven-failsafe-plugin` (activated by the `integration-test` Maven profile) | seconds (WireMock in-process) |
+| E2E | _N/A_ | Library/demo project — no deployable unit | — |
+
+JUnit 6 tests in `src/test/java/` mirror the main source structure. Legacy unit tests invoke `main()` methods (these make live HTTP requests and are fragile). New `*IT.java` tests use [WireMock](https://wiremock.org/) to stub upstream HTTP services — see `OkHttpClientIT.java` as the reference pattern. Coverage enforced at 70% via JaCoCo plugin (`jacoco:check`).
+
+## Static Analysis
+
+`make static-check` is the composite fast quality gate and runs in CI:
+
+- `format-check` — [google-java-format](https://github.com/google/google-java-format) drift detection
+- `lint` — `mvn validate` + `mvn compile` with `failOnWarning=true`
+- `secrets` — [gitleaks](https://github.com/gitleaks/gitleaks) scan for hardcoded secrets
+- `trivy-fs` — [Trivy](https://github.com/aquasecurity/trivy) filesystem scan for vuln/secret/misconfig (CRITICAL/HIGH fails build; MEDIUM informational)
+- `mermaid-lint` — [mermaid-cli](https://github.com/mermaid-js/mermaid-cli) validates Mermaid blocks in `README.md` (Docker-based)
+
+Run `make format` to auto-apply google-java-format. `cve-check` (OWASP dependency-check) is kept separate — it runs on release tags (`v*`) because of its long runtime.
 
 ## Key Config
 
-- **pom.xml** — maven-enforcer-plugin requires Maven 3.6.3+ and Java 21+; JaCoCo 70% threshold; compiler `failOnWarning` enabled; Jackson 3.x (`tools.jackson.core`); OWASP dependency-check bound to build lifecycle (skip with `-Ddependency-check.skip=true`)
+- **pom.xml** — maven-enforcer-plugin requires Maven 3.6.3+ and Java 25+; JaCoCo 70% threshold; compiler `failOnWarning` enabled; Jackson 3.x (`tools.jackson.core`); OWASP dependency-check bound to build lifecycle (skip with `-Ddependency-check.skip=true`); Failsafe plugin activated via `-P integration-test` profile
+- **.mise.toml** — Java (Temurin 25 LTS) and Maven 3.9.14 pins; auto-installed by `make deps`
+- **.java-version** — single source of truth consumed by GitHub Actions `setup-java`
+- **.nvmrc** — Node version for Renovate tooling (`make renovate-bootstrap`)
 - **renovate.json** — Automated dependency PRs with automerge on all update types
-- **CI pipeline** — Multi-job: `lint` (+ Trivy SAST) → `tests` + `builds` (parallel); `cve-check` on push to main
+- **CI pipeline** — `static-check` → `test` + `integration-test` + `build` (parallel); `cve-check` on release tags (`v*`); `ci-pass` gate aggregates all required jobs for branch protection
+
+## Upgrade Backlog
+
+Deferred items surfaced by `/upgrade-analysis` — revisit on the next review pass.
+
+- [ ] `.mise.toml` Java tuple (`temurin-25.0.2+10.0.LTS`) is not cleanly tracked by Renovate's `java-version` datasource; when Adoptium publishes `25.0.3+*` (next quarterly GA), bump manually or switch to `adoptium-java` datasource if Renovate stalls.
+- [ ] `jdk.incubator.vector` is still an incubator module as of Java 25 — the `--add-modules jdk.incubator.vector` flag in `cve-check` should be removed if/when the module is promoted out of incubator.
+- [ ] `maven.compiler.failOnWarning=true` will make JDK deprecation warnings upgrade-blocking on future LTS bumps (Java 29+). Plan a targeted deprecation audit before each LTS bump.
+- [ ] Retrofit 3.x ⇔ OkHttp 5.x is the only supported pairing — keep these bumped together. Renovate groups them separately; watch for version drift.
+- [ ] JsonPath 3.0.0 is the first 3.x GA (January 2025); watch 3.1 release notes for behavioural changes that may affect `jsonparse/pathqueries/`.
+- [ ] JUnit 6.1.0 (currently `6.1.0-M1`), SLF4J 2.1.0 (alpha), and `maven-compiler-plugin` 4.0.0 (beta) are all pre-release — adopt after GA.
+- [ ] `NVD_API_KEY` GitHub secret must be set before tagging a release or the tag-gated `cve-check` job will fail (NVD rate limit without a key).
+- [ ] `make deps-update` bulk-bumps dependencies; with Renovate as the source of truth, treat this target as manual-only.
 
 ## Skills
 

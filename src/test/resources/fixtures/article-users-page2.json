@@ -1,0 +1,28 @@
+{
+  "page": 2,
+  "per_page": 10,
+  "total": 42,
+  "total_pages": 5,
+  "data": [
+    {
+      "id": 11,
+      "username": "brynn",
+      "about": "",
+      "submitted": 1458349449,
+      "updated_at": "2016-05-15T05:54:52.554Z",
+      "submission_count": 22,
+      "comment_count": 47,
+      "created_at": 1458349449
+    },
+    {
+      "id": 12,
+      "username": "rocketraccoon",
+      "about": "Guardian of the Galaxy",
+      "submitted": 1460000000,
+      "updated_at": "2016-06-01T12:00:00.000Z",
+      "submission_count": 3,
+      "comment_count": 5,
+      "created_at": 1459000000
+    }
+  ]
+}

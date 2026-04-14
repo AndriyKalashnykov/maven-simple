@@ -5,8 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class Links_ {
 
-    @SerializedName("self")
-    @Expose
-    public String self;
-
+  @SerializedName("self")
+  @Expose
+  public String self;
 }

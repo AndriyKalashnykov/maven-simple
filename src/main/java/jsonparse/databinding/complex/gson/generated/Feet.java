@@ -5,11 +5,11 @@ import com.google.gson.annotations.SerializedName;
 
 public class Feet {
 
-    @SerializedName("estimated_diameter_min")
-    @Expose
-    public double estimatedDiameterMin;
-    @SerializedName("estimated_diameter_max")
-    @Expose
-    public double estimatedDiameterMax;
+  @SerializedName("estimated_diameter_min")
+  @Expose
+  public double estimatedDiameterMin;
 
+  @SerializedName("estimated_diameter_max")
+  @Expose
+  public double estimatedDiameterMax;
 }

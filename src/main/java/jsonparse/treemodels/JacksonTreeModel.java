@@ -1,69 +1,62 @@
 package jsonparse.treemodels;
 
+import java.io.IOException;
+import jsonparse.SourceData;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
-import jsonparse.SourceData;
-
-import java.io.IOException;
 
 public class JacksonTreeModel {
 
-    // ObjectMapper is stateless and thread-safe so it's OK to create one like this
-    private static final ObjectMapper mapper = new ObjectMapper();
+  // ObjectMapper is stateless and thread-safe so it's OK to create one like this
+  private static final ObjectMapper mapper = new ObjectMapper();
 
-    public static void main(String[] args) throws IOException {
+  public static void main(String[] args) throws IOException {
 
-        JsonNode neoJsonNode = mapper.readTree(SourceData.asString());
+    JsonNode neoJsonNode = mapper.readTree(SourceData.asString());
 
-        System.out.println("NEO count: " + getNeoCount(neoJsonNode));
+    System.out.println("NEO count: " + getNeoCount(neoJsonNode));
 
-        System.out.println("Potentially hazardous asteroids: " +
-                getPotentiallyHazardousAsteroidCount(neoJsonNode));
+    System.out.println(
+        "Potentially hazardous asteroids: " + getPotentiallyHazardousAsteroidCount(neoJsonNode));
 
-        NeoNameAndSpeed fastestNEO = getFastestNEO(neoJsonNode);
-        System.out.println(
-                String.format("Fastest NEO is: %s at %f km/sec",
-                        fastestNEO.name, fastestNEO.speed));
+    NeoNameAndSpeed fastestNEO = getFastestNEO(neoJsonNode);
+    System.out.println(
+        String.format("Fastest NEO is: %s at %f km/sec", fastestNEO.name, fastestNEO.speed));
+  }
 
+  private static int getNeoCount(JsonNode neoJsonNode) {
+    return neoJsonNode.get("element_count").asInt();
+  }
 
-    }
-
-    private static int getNeoCount(JsonNode neoJsonNode) {
-        return neoJsonNode
-                .get("element_count")
-                .asInt();
-    }
-
-    private static int getPotentiallyHazardousAsteroidCount(JsonNode neoJsonNode) {
-        int potentiallyHazardousAsteroidCount = 0;
-        JsonNode nearEarthObjects = neoJsonNode.get("near_earth_objects");
-        for (JsonNode neoClosestApproachDate : nearEarthObjects) {
-            for (JsonNode neo : neoClosestApproachDate) {
-                if (neo.get("is_potentially_hazardous_asteroid").asBoolean()) {
-                    potentiallyHazardousAsteroidCount += 1;
-                }
-            }
+  private static int getPotentiallyHazardousAsteroidCount(JsonNode neoJsonNode) {
+    int potentiallyHazardousAsteroidCount = 0;
+    JsonNode nearEarthObjects = neoJsonNode.get("near_earth_objects");
+    for (JsonNode neoClosestApproachDate : nearEarthObjects) {
+      for (JsonNode neo : neoClosestApproachDate) {
+        if (neo.get("is_potentially_hazardous_asteroid").asBoolean()) {
+          potentiallyHazardousAsteroidCount += 1;
         }
-        return potentiallyHazardousAsteroidCount;
+      }
     }
+    return potentiallyHazardousAsteroidCount;
+  }
 
-    private static NeoNameAndSpeed getFastestNEO(JsonNode neoJsonNode) {
-        NeoNameAndSpeed fastestNEO = null;
-        JsonNode nearEarthObjects = neoJsonNode.get("near_earth_objects");
-        for (JsonNode neoClosestApproachDate : nearEarthObjects) {
-            for (JsonNode neo : neoClosestApproachDate) {
-                double speed = neo
-                        .get("close_approach_data")
-                        .get(0)
-                        .get("relative_velocity")
-                        .get("kilometers_per_second")
-                        .asDouble();
-                if (fastestNEO == null || speed > fastestNEO.speed) {
-                    fastestNEO = new NeoNameAndSpeed(neo.get("name").asString(), speed);
-                }
-            }
+  private static NeoNameAndSpeed getFastestNEO(JsonNode neoJsonNode) {
+    NeoNameAndSpeed fastestNEO = null;
+    JsonNode nearEarthObjects = neoJsonNode.get("near_earth_objects");
+    for (JsonNode neoClosestApproachDate : nearEarthObjects) {
+      for (JsonNode neo : neoClosestApproachDate) {
+        double speed =
+            neo.get("close_approach_data")
+                .get(0)
+                .get("relative_velocity")
+                .get("kilometers_per_second")
+                .asDouble();
+        if (fastestNEO == null || speed > fastestNEO.speed) {
+          fastestNEO = new NeoNameAndSpeed(neo.get("name").asString(), speed);
         }
-        return fastestNEO;
+      }
     }
-
+    return fastestNEO;
+  }
 }

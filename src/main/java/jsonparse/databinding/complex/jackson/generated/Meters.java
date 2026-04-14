@@ -5,15 +5,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-        "estimated_diameter_min",
-        "estimated_diameter_max"
-})
+@JsonPropertyOrder({"estimated_diameter_min", "estimated_diameter_max"})
 public class Meters {
 
-    @JsonProperty("estimated_diameter_min")
-    public double estimatedDiameterMin;
-    @JsonProperty("estimated_diameter_max")
-    public double estimatedDiameterMax;
+  @JsonProperty("estimated_diameter_min")
+  public double estimatedDiameterMin;
 
+  @JsonProperty("estimated_diameter_max")
+  public double estimatedDiameterMax;
 }

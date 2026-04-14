@@ -1,19 +1,17 @@
 package http.client.okhttp;
 
+import java.io.IOException;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-
-
 public class OkHttpDemoTest {
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(OkHttpDemoTest.class);
+  protected static final Logger LOGGER = LoggerFactory.getLogger(OkHttpDemoTest.class);
 
-    @Test
-    public void mainTest() throws IOException {
+  @Test
+  public void mainTest() throws IOException {
 
-        OkHttpDemo.main(new String[]{});
-    }
+    OkHttpDemo.main(new String[] {});
+  }
 }

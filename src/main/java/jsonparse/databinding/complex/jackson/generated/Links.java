@@ -5,18 +5,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-        "next",
-        "prev",
-        "self"
-})
+@JsonPropertyOrder({"next", "prev", "self"})
 public class Links {
 
-    @JsonProperty("next")
-    public String next;
-    @JsonProperty("prev")
-    public String prev;
-    @JsonProperty("self")
-    public String self;
+  @JsonProperty("next")
+  public String next;
 
+  @JsonProperty("prev")
+  public String prev;
+
+  @JsonProperty("self")
+  public String self;
 }

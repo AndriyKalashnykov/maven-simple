@@ -7,11 +7,11 @@ import org.slf4j.LoggerFactory;
 
 public class ComplexDataBindingGsonTest {
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(ComplexDataBindingGsonTest.class);
+  protected static final Logger LOGGER = LoggerFactory.getLogger(ComplexDataBindingGsonTest.class);
 
-    @Test
-    public void mainTest() {
+  @Test
+  public void mainTest() {
 
-        ComplexDataBindingGson.main(new String[]{});
-    }
+    ComplexDataBindingGson.main(new String[] {});
+  }
 }

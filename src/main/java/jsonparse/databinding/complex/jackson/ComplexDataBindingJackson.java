@@ -1,37 +1,42 @@
 package jsonparse.databinding.complex.jackson;
 
-import tools.jackson.databind.ObjectMapper;
+import java.util.Collection;
+import java.util.Comparator;
 import jsonparse.SourceData;
 import jsonparse.databinding.complex.jackson.generated.NeoDetails;
 import jsonparse.databinding.complex.jackson.generated.NeoWsDataJackson;
-
-import java.util.Collection;
-import java.util.Comparator;
+import tools.jackson.databind.ObjectMapper;
 
 public class ComplexDataBindingJackson {
 
-    public static void main(String[] args) {
-        NeoWsDataJackson neoWsDataJackson = new ObjectMapper()
-                .readValue(SourceData.asString(), NeoWsDataJackson.class);
+  public static void main(String[] args) {
+    NeoWsDataJackson neoWsDataJackson =
+        new ObjectMapper().readValue(SourceData.asString(), NeoWsDataJackson.class);
 
+    System.out.println("NEO count: " + neoWsDataJackson.elementCount);
 
-        System.out.println("NEO count: " + neoWsDataJackson.elementCount);
+    System.out.println(
+        "Potentially hazardous asteroids: "
+            + neoWsDataJackson.nearEarthObjects.values().stream()
+                .flatMap(
+                    Collection
+                        ::stream) // this converts a Collection of Collections of objects into a
+                // single stream
+                .filter(neo -> neo.isPotentiallyHazardousAsteroid)
+                .count());
 
+    NeoDetails fastestNeo =
+        neoWsDataJackson.nearEarthObjects.values().stream()
+            .flatMap(Collection::stream)
+            .max(
+                Comparator.comparing(
+                    neo -> neo.closeApproachData.get(0).relativeVelocity.kilometersPerSecond))
+            .get();
 
-        System.out.println("Potentially hazardous asteroids: " +
-                neoWsDataJackson.nearEarthObjects.values()
-                        .stream().flatMap(Collection::stream) // this converts a Collection of Collections of objects into a single stream
-                        .filter(neo -> neo.isPotentiallyHazardousAsteroid)
-                        .count());
-
-
-        NeoDetails fastestNeo = neoWsDataJackson.nearEarthObjects.values()
-                .stream().flatMap(Collection::stream)
-                .max(Comparator.comparing(neo -> neo.closeApproachData.get(0).relativeVelocity.kilometersPerSecond))
-                .get();
-
-        System.out.println(String.format("Fastest NEO is: %s at %f km/sec",
-                fastestNeo.name, fastestNeo.closeApproachData.get(0).relativeVelocity.kilometersPerSecond));
-
-    }
+    System.out.println(
+        String.format(
+            "Fastest NEO is: %s at %f km/sec",
+            fastestNeo.name,
+            fastestNeo.closeApproachData.get(0).relativeVelocity.kilometersPerSecond));
+  }
 }

@@ -7,11 +7,12 @@ import org.slf4j.LoggerFactory;
 
 public class ComplexDataBindingJacksonTest {
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(ComplexDataBindingJacksonTest.class);
+  protected static final Logger LOGGER =
+      LoggerFactory.getLogger(ComplexDataBindingJacksonTest.class);
 
-    @Test
-    public void mainTest() {
+  @Test
+  public void mainTest() {
 
-        ComplexDataBindingJackson.main(new String[]{});
-    }
+    ComplexDataBindingJackson.main(new String[] {});
+  }
 }
