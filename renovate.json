@@ -40,7 +40,7 @@
     },
     {
       "customType": "regex",
-      "description": "Update .mise.toml tool pins via inline renovate comments",
+      "description": "Update .mise.toml tool pins via inline renovate comments. Regex is intentionally more permissive than the canonical /renovate skill pattern to match aqua-prefixed quoted keys (e.g. \"aqua:nektos/act\") — do not regularize.",
       "managerFilePatterns": ["/^\\.mise\\.toml$/"],
       "matchStrings": [
         "# renovate: datasource=(?<datasource>[^\\s]+) depName=(?<depName>[^\\s]+)( extractVersion=(?<extractVersion>[^\\s]+))?( versioning=(?<versioning>[^\\s]+))?\\n\"?[a-zA-Z0-9:/_-]+\"?\\s*=\\s*\"(?<currentValue>[^\"]+)\""
@@ -101,6 +101,14 @@
       ]
     },
     {
+      "description": "Group Apache HttpClient 5 dependencies (httpclient5 + httpcore5 release in lockstep)",
+      "groupName": "Apache HttpClient",
+      "matchPackageNames": [
+        "/^org\\.apache\\.httpcomponents\\.client5/",
+        "/^org\\.apache\\.httpcomponents\\.core5/"
+      ]
+    },
+    {
       "description": "Group SLF4J dependencies",
       "groupName": "SLF4J",
       "matchPackageNames": [
@@ -108,19 +116,10 @@
       ]
     },
     {
-      "description": "Group Apache Commons dependencies",
-      "groupName": "Apache Commons",
+      "description": "Group JUnit dependencies (junit-jupiter-api + junit-jupiter-engine)",
+      "groupName": "JUnit",
       "matchPackageNames": [
-        "/^org\\.apache\\.commons/",
-        "/^commons-/"
-      ]
-    },
-    {
-      "description": "Group testing dependencies",
-      "groupName": "Testing",
-      "matchPackageNames": [
-        "/^org\\.junit/",
-        "/^org\\.mockito/"
+        "/^org\\.junit/"
       ]
     },
     {
@@ -129,17 +128,6 @@
       "matchPackageNames": [
         "/^org\\.apache\\.maven\\.plugins/",
         "/^org\\.codehaus\\.mojo/"
-      ]
-    },
-    {
-      "description": "Group annotation libraries",
-      "groupName": "annotations",
-      "matchPackageNames": [
-        "/^com\\.google\\.errorprone/",
-        "net.jcip:jcip-annotations",
-        "org.checkerframework:checker-qual",
-        "org.jetbrains:annotations",
-        "org.jspecify:jspecify"
       ]
     }
   ]

@@ -3,9 +3,9 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
 [![Renovate enabled](https://img.shields.io/badge/renovate-enabled-brightgreen.svg)](https://app.renovatebot.com/dashboard#github/AndriyKalashnykov/maven-simple)
 
-# Maven Simple
+# Java HTTP Clients & JSON Parsing Reference
 
-Educational Java 25 LTS project demonstrating five HTTP client implementations and four JSON parsing approaches (Jackson 3.x tree/databind, Gson, JsonPath, Jackson JsonPointer) against NASA's Near-Earth Objects (NEO) API. Built with Maven and tested with JUnit 6 at 70% coverage.
+Side-by-side comparison of five Java HTTP clients (`HttpURLConnection`, `java.net.http.HttpClient`, Apache HttpClient 5, OkHttp, Retrofit) and four JSON-parsing approaches (tree model, simple data binding, full-schema data binding, path queries). Every implementation calls NASA's Near-Earth Objects (NEO) API with the same request and asserts the same response, so library trade-offs — ergonomics, dependency footprint, async support, schema handling — are directly visible.
 
 ```mermaid
 flowchart LR
@@ -92,6 +92,36 @@ Shared models live under `http/client/model/`.
 | Data binding — simple | `jsonparse/databinding/simple/` | Jackson + Gson POJO mapping |
 | Data binding — complex | `jsonparse/databinding/complex/` | Generated model classes (`jackson/generated/`, `gson/generated/`) |
 | Path queries | `jsonparse/pathqueries/` | JsonPath + Jackson JsonPointer |
+
+## Usage
+
+### Run a single example
+
+Each HTTP client and JSON-parsing approach has a matching `*Test.java` (Surefire, unit) and — where applicable — an `*IT.java` (Failsafe, WireMock-stubbed):
+
+```bash
+# run a single unit test
+mvn -B test -Dtest=OkHttpDemoTest -Ddependency-check.skip=true
+
+# run all WireMock-stubbed integration tests
+make integration-test
+```
+
+### Run a CVE scan locally
+
+`make cve-check` scans dependencies for known vulnerabilities using two data sources:
+
+- **[NVD](https://nvd.nist.gov/)** — NIST National Vulnerability Database. Without an API key, requests are rate-limited and the scan may fail with a 429 error.
+- **[OSS Index](https://ossindex.sonatype.org/)** — Sonatype's vulnerability database; provides additional coverage beyond NVD. Authentication is required — without credentials the analyzer is skipped.
+
+```bash
+export NVD_API_KEY=<nvd-api-key>
+export OSS_INDEX_USER=<ossindex-account-email>
+export OSS_INDEX_TOKEN=<ossindex-api-token>
+make cve-check
+```
+
+The NVD key is passed to Maven automatically. OSS Index credentials are read from env vars via `~/.m2/settings.xml` (generated on demand by the `cve-check` target).
 
 ## Make Targets
 
@@ -188,22 +218,6 @@ Pipeline: `changes` → `static-check` → `test` + `integration-test` + `build`
 Set secrets via **Settings > Secrets and variables > Actions > New repository secret**.
 
 [Renovate](https://docs.renovatebot.com/) keeps dependencies up to date with platform automerge enabled.
-
-### Running OWASP CVE Check Locally
-
-`make cve-check` scans dependencies for known vulnerabilities using two data sources:
-
-- **[NVD](https://nvd.nist.gov/)** — NIST National Vulnerability Database. Without an API key, requests are rate-limited and the scan may fail with a 429 error.
-- **[OSS Index](https://ossindex.sonatype.org/)** — Sonatype's vulnerability database, provides additional coverage beyond NVD. Authentication is required — without credentials the analyzer is skipped.
-
-```bash
-export NVD_API_KEY=<nvd-api-key>
-export OSS_INDEX_USER=<ossindex-account-email>
-export OSS_INDEX_TOKEN=<ossindex-api-token>
-make cve-check
-```
-
-The NVD key is passed to Maven automatically. OSS Index credentials are read from env vars via `~/.m2/settings.xml` (generated on demand by the `cve-check` target).
 
 ## Contributing
 
