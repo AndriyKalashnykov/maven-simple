@@ -7,7 +7,6 @@
   "enabledManagers": [
     "maven",
     "github-actions",
-    "nvm",
     "custom.regex"
   ],
   "commitMessagePrefix": "chore(all): ",
@@ -20,7 +19,7 @@
   "prHourlyLimit": 0,
   "platformAutomerge": true,
   "automerge": true,
-  "automergeType": "branch",
+  "automergeType": "pr",
   "automergeStrategy": "squash",
   "ignoreTests": false,
   "vulnerabilityAlerts": {
@@ -44,7 +43,7 @@
       "description": "Update .mise.toml tool pins via inline renovate comments",
       "managerFilePatterns": ["/^\\.mise\\.toml$/"],
       "matchStrings": [
-        "# renovate: datasource=(?<datasource>[^\\s]+) depName=(?<depName>[^\\s]+)( extractVersion=(?<extractVersion>[^\\s]+))?( versioning=(?<versioning>[^\\s]+))?\\n[a-zA-Z_-]+\\s*=\\s*\"(?<currentValue>[^\"]+)\""
+        "# renovate: datasource=(?<datasource>[^\\s]+) depName=(?<depName>[^\\s]+)( extractVersion=(?<extractVersion>[^\\s]+))?( versioning=(?<versioning>[^\\s]+))?\\n\"?[a-zA-Z0-9:/_-]+\"?\\s*=\\s*\"(?<currentValue>[^\"]+)\""
       ]
     }
   ],
@@ -130,6 +129,17 @@
       "matchPackageNames": [
         "/^org\\.apache\\.maven\\.plugins/",
         "/^org\\.codehaus\\.mojo/"
+      ]
+    },
+    {
+      "description": "Group annotation libraries",
+      "groupName": "annotations",
+      "matchPackageNames": [
+        "/^com\\.google\\.errorprone/",
+        "net.jcip:jcip-annotations",
+        "org.checkerframework:checker-qual",
+        "org.jetbrains:annotations",
+        "org.jspecify:jspecify"
       ]
     }
   ]

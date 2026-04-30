@@ -86,24 +86,27 @@ Run `make format` to auto-apply google-java-format. `cve-check` (OWASP dependenc
 ## Key Config
 
 - **pom.xml** — maven-enforcer-plugin requires Maven 3.6.3+ and Java 25+; JaCoCo 70% threshold; compiler `failOnWarning` enabled; Jackson 3.x (`tools.jackson.core`); OWASP dependency-check bound to build lifecycle (skip with `-Ddependency-check.skip=true`); Failsafe plugin activated via `-P integration-test` profile
-- **.mise.toml** — Java (Temurin 25 LTS) and Maven 3.9.14 pins; auto-installed by `make deps`
+- **.mise.toml** — single source of truth for Java (Temurin 25 LTS), Maven 3.9.15, and aqua-backed pins for `act`, `gitleaks`, `trivy`; auto-installed by `make deps`. The Makefile's matching `_VERSION` constants are derived at parse time via `$(shell awk ...)` so the curl fallbacks in `deps-maven` / `deps-act` / `deps-gitleaks` / `deps-trivy` (used inside CI containers with setup-java but no mise) read the same version mise installs locally.
 - **.java-version** — single source of truth consumed by GitHub Actions `setup-java`
 - **.nvmrc** — Node version for Renovate tooling (`make renovate-bootstrap`)
 - **renovate.json** — Automated dependency PRs with automerge on all update types
-- **CI pipeline** — `static-check` → `test` + `integration-test` + `build` (parallel); `cve-check` on release tags (`v*`); `ci-pass` gate aggregates all required jobs for branch protection
+- **CI pipeline** — `changes` (path-filter detector via `dorny/paths-filter`) → `static-check` → `test` + `integration-test` + `build` (parallel); `cve-check` on release tags, weekly schedule (Mon 06:00 UTC), and manual dispatch, with NVD database cache; `ci-pass` gate aggregates all required jobs for branch protection (skipped doc-only jobs count as pass)
 
 ## Upgrade Backlog
 
 Deferred items surfaced by `/upgrade-analysis` — revisit on the next review pass.
 
-- [ ] `.mise.toml` Java tuple (`temurin-25.0.2+10.0.LTS`) is not cleanly tracked by Renovate's `java-version` datasource; when Adoptium publishes `25.0.3+*` (next quarterly GA), bump manually or switch to `adoptium-java` datasource if Renovate stalls.
+- [ ] `.mise.toml` Java tuple is not cleanly tracked by Renovate's `java-version` datasource; bump manually each Adoptium quarterly GA, or switch to `adoptium-java` datasource if Renovate stalls. (Currently pinned at `temurin-25.0.3+9.0.LTS`.)
 - [ ] `jdk.incubator.vector` is still an incubator module as of Java 25 — the `--add-modules jdk.incubator.vector` flag in `cve-check` should be removed if/when the module is promoted out of incubator.
 - [ ] `maven.compiler.failOnWarning=true` will make JDK deprecation warnings upgrade-blocking on future LTS bumps (Java 29+). Plan a targeted deprecation audit before each LTS bump.
 - [ ] Retrofit 3.x ⇔ OkHttp 5.x is the only supported pairing — keep these bumped together. Renovate groups them separately; watch for version drift.
 - [ ] JsonPath 3.0.0 is the first 3.x GA (January 2025); watch 3.1 release notes for behavioural changes that may affect `jsonparse/pathqueries/`.
-- [ ] JUnit 6.1.0 (currently `6.1.0-M1`), SLF4J 2.1.0 (alpha), and `maven-compiler-plugin` 4.0.0 (beta) are all pre-release — adopt after GA.
-- [ ] `NVD_API_KEY` GitHub secret must be set before tagging a release or the tag-gated `cve-check` job will fail (NVD rate limit without a key).
-- [ ] `make deps-update` bulk-bumps dependencies; with Renovate as the source of truth, treat this target as manual-only.
+- [ ] JUnit 6.1.0 (currently `6.1.0-RC1`), SLF4J 2.1.0 (alpha), `maven-compiler-plugin` 4.0.0 (currently `beta-4`), `maven-resources-plugin` 4.0.0 (beta), and WireMock 4.0.0 (beta) are all pre-release — adopt after GA.
+- [ ] Jackson is on the deliberate cross-major split: `tools.jackson.core:jackson-databind` 3.x reuses the legacy `com.fasterxml.jackson.core:jackson-annotations` 2.x coordinate (Jackson 3 didn't move the annotations package). The `jsonparse/databinding/complex/jackson/generated/` POJOs import `com.fasterxml.jackson.annotation.*` — this is intentional, not a migration leftover.
+- [ ] `dorny/paths-filter` v4.0.1 is now available; the project just adopted v3.0.2. v4 has shape changes — let Renovate open the major PR with migration notes attached, do not fast-follow.
+- [ ] `RENOVATE_VERSION` tracks the `npm` datasource (not `github-releases`) because Renovate's GitHub releases run ~8 versions ahead of npm publishes (the consumable channel for `npx renovate@<ver>`). If Renovate ever flips publish cadence and the npm package catches up to GitHub, switching the datasource back to `github-releases` is fine. Detection: `make renovate-validate` failing with `npm error notarget No matching version found for renovate@<ver>` means the datasource is mismatched.
+- [ ] `NVD_API_KEY` GitHub secret must be set before tagging a release or the tag-gated `cve-check` job will fail (NVD rate limit without a key). The job also runs weekly on schedule and via `workflow_dispatch`.
+- [ ] `make deps-update` bulk-bumps dependencies; with Renovate as the source of truth, treat this target as manual-only — consider deleting or guarding with a "bypasses Renovate" warning.
 
 ## Skills
 

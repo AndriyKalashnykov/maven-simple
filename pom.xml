@@ -37,6 +37,13 @@
             </exclusions>
         </dependency>
 
+        <!-- Declared directly: source code references httpcore5 types (transitive of httpclient5) -->
+        <dependency>
+            <groupId>org.apache.httpcomponents.core5</groupId>
+            <artifactId>httpcore5</artifactId>
+            <version>5.4</version>
+        </dependency>
+
         <!-- OkHttp (JVM artifact for Maven — the umbrella 'okhttp' is empty under KMP) -->
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
@@ -77,7 +84,7 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.13.2</version>
+            <version>2.14.0</version>
         </dependency>
 
         <!-- Jackson 3.x (java.time support is built into databind, no separate jsr310 module needed) -->
@@ -85,6 +92,21 @@
             <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>3.1.2</version>
+        </dependency>
+
+        <!-- Declared directly: tree-model code references jackson-core types (transitive of jackson-databind) -->
+        <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>3.1.2</version>
+        </dependency>
+
+        <!-- Jackson 3.x reuses the legacy 2.x annotations coordinate (com.fasterxml.jackson.annotation.*).
+             Generated POJOs under jsonparse/databinding/complex/jackson/generated/ import these directly. -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.21</version>
         </dependency>
 
         <!-- JsonPath -->
@@ -128,9 +150,17 @@
 
         <!-- slf4j-jdk14 removed — not directly imported; slf4j-simple is the active binding -->
 
+        <!-- Explicit api + engine instead of the junit-jupiter aggregator
+             (no parameterized tests in src/test/java, so junit-jupiter-params is not needed) -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>6.0.3</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
             <version>6.0.3</version>
             <scope>test</scope>
         </dependency>
@@ -209,6 +239,12 @@
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <version>3.10.0</version>
+                <configuration>
+                    <!-- Test-runtime dependency; not visible to compile-time dependency:analyze -->
+                    <usedDependencies>
+                        <usedDependency>org.junit.jupiter:junit-jupiter-engine</usedDependency>
+                    </usedDependencies>
+                </configuration>
             </plugin>
 
             <plugin>

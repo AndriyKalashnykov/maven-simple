@@ -6,23 +6,26 @@ CURRENTTAG := $(shell git describe --tags --abbrev=0 2>/dev/null || echo "dev")
 SHELL := /bin/bash
 export PATH := $(HOME)/.local/bin:$(PATH)
 
-# === Tool Versions (pinned) ===
-# Java and Maven pins live in .mise.toml; MAVEN_VER here only backs the
-# deps-maven fallback used inside act/CI containers that lack mise.
-# renovate: datasource=maven depName=org.apache.maven:apache-maven
-MAVEN_VER        := 3.9.14
-# renovate: datasource=github-releases depName=nektos/act extractVersion=^v(?<version>.*)$
-ACT_VERSION      := 0.2.87
-# renovate: datasource=github-releases depName=renovatebot/renovate extractVersion=^v(?<version>.*)$
-RENOVATE_VERSION := 43.119.0
+# === Tool Versions ===
+# .mise.toml is the single source of truth for maven, act, gitleaks, and trivy.
+# These constants are derived at parse time so per-tool deps fallbacks
+# (deps-maven, deps-act, deps-gitleaks, deps-trivy — used inside CI containers
+# with setup-java but no mise) read the same version mise installs locally.
+MAVEN_VER        := $(shell awk -F'"' '/^maven *=/ {print $$2}' .mise.toml)
+ACT_VERSION      := $(shell awk -F'"' '/^"aqua:nektos\/act" *=/ {print $$4}' .mise.toml)
+GITLEAKS_VERSION := $(shell awk -F'"' '/^"aqua:gitleaks\/gitleaks" *=/ {print $$4}' .mise.toml)
+TRIVY_VERSION    := $(shell awk -F'"' '/^"aqua:aquasecurity\/trivy" *=/ {print $$4}' .mise.toml)
+
+# Tools NOT in mise (npx-run Node app, JAR download, Docker image — per skill §1).
+# Renovate tracks these via the generic Makefile customManagers regex in renovate.json.
+# Renovate: track npm publishes (lag ~8 patches behind GitHub releases — npm
+# is what `npx renovate@$(VERSION)` resolves; GitHub-tag pins break validate).
+# renovate: datasource=npm depName=renovate
+RENOVATE_VERSION    := 43.150.0
 # renovate: datasource=github-releases depName=google/google-java-format extractVersion=^v(?<version>.*)$
-GJF_VERSION      := 1.35.0
-# renovate: datasource=github-releases depName=gitleaks/gitleaks extractVersion=^v(?<version>.*)$
-GITLEAKS_VERSION := 8.30.1
-# renovate: datasource=github-releases depName=aquasecurity/trivy extractVersion=^v(?<version>.*)$
-TRIVY_VERSION    := 0.69.3
+GJF_VERSION         := 1.35.0
 # renovate: datasource=docker depName=minlag/mermaid-cli
-MERMAID_CLI_VERSION := 11.12.0
+MERMAID_CLI_VERSION := 11.14.0
 
 # File-derived versions (source of truth = idiomatic dotfiles)
 NODE_VERSION := $(shell cat .nvmrc 2>/dev/null || echo 22)
@@ -110,6 +113,14 @@ deps-trivy:
 			| sh -s -- -b $(LOCAL_BIN) v$(TRIVY_VERSION); \
 	}
 
+#deps-docker: @ Verify Docker is available (skipped under act)
+deps-docker:
+	@if [ "$$ACT" = "true" ]; then exit 0; fi; \
+	command -v docker >/dev/null 2>&1 || { \
+		echo "Error: docker required (install Docker Desktop or Docker Engine)"; \
+		exit 1; \
+	}
+
 #deps-check: @ Show required tools and installation status
 deps-check:
 	@echo "--- Tool status ---"
@@ -122,7 +133,7 @@ deps-check:
 
 #clean: @ Cleanup
 clean:
-	@command -v mvn >/dev/null 2>&1 && mvn -B clean -q || rm -rf target
+	@rm -rf target
 
 #build: @ Build project (skips tests and OWASP dependency-check)
 build: deps
@@ -164,12 +175,11 @@ trivy-fs: deps-trivy
 	@trivy fs --scanners vuln,secret,misconfig --severity MEDIUM --exit-code 0 .
 
 #mermaid-lint: @ Validate Mermaid diagrams in Markdown (Docker; skipped under act)
-mermaid-lint:
+mermaid-lint: deps-docker
 	@if [ "$$ACT" = "true" ]; then \
 		echo "Skipping mermaid-lint under act (docker-in-docker unavailable)"; \
 		exit 0; \
 	fi; \
-	command -v docker >/dev/null 2>&1 || { echo "Error: docker required for mermaid-lint"; exit 1; }; \
 	grep -l '^```mermaid' README.md 2>/dev/null >/dev/null || { echo "No Mermaid blocks found; skipping."; exit 0; }; \
 	tmpdir=$$(mktemp -d); \
 	cp README.md $$tmpdir/; \
@@ -218,13 +228,17 @@ ci: deps static-check test integration-test coverage-check build
 #ci-run: @ Run GitHub Actions workflow locally using act
 ci-run: deps-act
 	@docker container prune -f 2>/dev/null || true
-	@act push -W .github/workflows/ci.yml \
+	@evt=$$(mktemp /tmp/act-push-event.XXXXXX.json); \
+	printf '{"ref":"refs/heads/main","repository":{"default_branch":"main","name":"$(APP_NAME)","full_name":"AndriyKalashnykov/$(APP_NAME)"}}' >"$$evt"; \
+	act push -W .github/workflows/ci.yml \
 		--container-architecture linux/amd64 \
 		--artifact-server-path /tmp/act-artifacts \
+		--eventpath "$$evt" \
 		--var ACT=true \
 		$$([ -n "$$NVD_API_KEY" ] && echo "--secret NVD_API_KEY=$$NVD_API_KEY") \
 		$$([ -n "$$OSS_INDEX_USER" ] && echo "--secret OSS_INDEX_USER=$$OSS_INDEX_USER") \
-		$$([ -n "$$OSS_INDEX_TOKEN" ] && echo "--secret OSS_INDEX_TOKEN=$$OSS_INDEX_TOKEN")
+		$$([ -n "$$OSS_INDEX_TOKEN" ] && echo "--secret OSS_INDEX_TOKEN=$$OSS_INDEX_TOKEN"); \
+	rc=$$?; rm -f "$$evt"; exit $$rc
 
 #release: @ Create a release (usage: make release VERSION=x.y.z)
 release: deps
@@ -281,7 +295,7 @@ deps-update: deps-updates
 	@mvn -B versions:use-latest-releases
 	@mvn -B versions:commit
 
-.PHONY: help deps deps-maven deps-install deps-act deps-gitleaks deps-trivy deps-check \
+.PHONY: help deps deps-maven deps-install deps-act deps-gitleaks deps-trivy deps-docker deps-check \
 	deps-updates deps-update deps-prune deps-prune-check \
 	clean build test integration-test lint format format-check secrets trivy-fs mermaid-lint static-check \
 	ci ci-run release vulncheck cve-check \
