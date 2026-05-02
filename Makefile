@@ -230,14 +230,16 @@ ci-run: deps-act
 	@docker container prune -f 2>/dev/null || true
 	@evt=$$(mktemp /tmp/act-push-event.XXXXXX.json); \
 	printf '{"ref":"refs/heads/main","repository":{"default_branch":"main","name":"$(APP_NAME)","full_name":"AndriyKalashnykov/$(APP_NAME)"}}' >"$$evt"; \
+	secret_args=(); \
+	[ -n "$$NVD_API_KEY" ] && secret_args+=(--secret NVD_API_KEY); \
+	[ -n "$$OSS_INDEX_USER" ] && secret_args+=(--secret OSS_INDEX_USER); \
+	[ -n "$$OSS_INDEX_TOKEN" ] && secret_args+=(--secret OSS_INDEX_TOKEN); \
 	act push -W .github/workflows/ci.yml \
 		--container-architecture linux/amd64 \
 		--artifact-server-path /tmp/act-artifacts \
 		--eventpath "$$evt" \
 		--var ACT=true \
-		$$([ -n "$$NVD_API_KEY" ] && echo "--secret NVD_API_KEY=$$NVD_API_KEY") \
-		$$([ -n "$$OSS_INDEX_USER" ] && echo "--secret OSS_INDEX_USER=$$OSS_INDEX_USER") \
-		$$([ -n "$$OSS_INDEX_TOKEN" ] && echo "--secret OSS_INDEX_TOKEN=$$OSS_INDEX_TOKEN"); \
+		"$${secret_args[@]}"; \
 	rc=$$?; rm -f "$$evt"; exit $$rc
 
 #release: @ Create a release (usage: make release VERSION=x.y.z)
