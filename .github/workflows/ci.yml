@@ -81,9 +81,6 @@ jobs:
       - name: Install Maven
         run: make deps-maven
 
-      - name: Test with coverage
-        run: make coverage-generate
-
       - name: Verify coverage threshold
         run: make coverage-check
         continue-on-error: true
@@ -93,31 +90,9 @@ jobs:
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         continue-on-error: true
         with:
-          name: coverage
+          name: coverage-report
           path: target/site/jacoco/
           retention-days: 14
-
-  build:
-    needs: [changes, static-check]
-    if: needs.changes.outputs.code == 'true'
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-
-      - name: Set up JDK
-        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
-        with:
-          java-version-file: .java-version
-          distribution: 'temurin'
-          cache: 'maven'
-
-      - name: Install Maven
-        run: make deps-maven
-
-      - name: Build
-        run: make build
 
   integration-test:
     needs: [changes, static-check]
@@ -140,6 +115,28 @@ jobs:
 
       - name: Integration test
         run: make integration-test
+
+  build:
+    needs: [changes, static-check]
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Set up JDK
+        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
+        with:
+          java-version-file: .java-version
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Install Maven
+        run: make deps-maven
+
+      - name: Build
+        run: make build
 
   cve-check:
     needs: [static-check]
@@ -167,13 +164,8 @@ jobs:
           key: nvd-db-${{ hashFiles('pom.xml') }}
           restore-keys: nvd-db-
 
-      - name: Create Maven settings for OSS Index
-        run: make maven-settings-ossindex
-        env:
-          OSS_INDEX_USER: ${{ secrets.OSS_INDEX_USER }}
-          OSS_INDEX_TOKEN: ${{ secrets.OSS_INDEX_TOKEN }}
-
       - name: OWASP dependency check
+        if: ${{ env.ACT != 'true' }}
         env:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
           OSS_INDEX_USER: ${{ secrets.OSS_INDEX_USER }}

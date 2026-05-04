@@ -11,7 +11,7 @@ export PATH := $(HOME)/.local/bin:$(PATH)
 # These constants are derived at parse time so per-tool deps fallbacks
 # (deps-maven, deps-act, deps-gitleaks, deps-trivy — used inside CI containers
 # with setup-java but no mise) read the same version mise installs locally.
-MAVEN_VER        := $(shell awk -F'"' '/^maven *=/ {print $$2}' .mise.toml)
+MAVEN_VERSION    := $(shell awk -F'"' '/^maven *=/ {print $$2}' .mise.toml)
 ACT_VERSION      := $(shell awk -F'"' '/^"aqua:nektos\/act" *=/ {print $$4}' .mise.toml)
 GITLEAKS_VERSION := $(shell awk -F'"' '/^"aqua:gitleaks\/gitleaks" *=/ {print $$4}' .mise.toml)
 TRIVY_VERSION    := $(shell awk -F'"' '/^"aqua:aquasecurity\/trivy" *=/ {print $$4}' .mise.toml)
@@ -66,10 +66,10 @@ deps:
 #deps-maven: @ Install Maven into ~/.local (CI fallback when setup-java is unavailable)
 deps-maven:
 	@command -v mvn >/dev/null 2>&1 || { \
-		echo "Installing Maven $(MAVEN_VER) into $(HOME)/.local..."; \
+		echo "Installing Maven $(MAVEN_VERSION) into $(HOME)/.local..."; \
 		mkdir -p $(HOME)/.local/opt $(LOCAL_BIN); \
-		curl -fsSL "https://archive.apache.org/dist/maven/maven-3/$(MAVEN_VER)/binaries/apache-maven-$(MAVEN_VER)-bin.tar.gz" | tar xz -C $(HOME)/.local/opt; \
-		ln -sf $(HOME)/.local/opt/apache-maven-$(MAVEN_VER)/bin/mvn $(LOCAL_BIN)/mvn; \
+		curl -fsSL "https://archive.apache.org/dist/maven/maven-3/$(MAVEN_VERSION)/binaries/apache-maven-$(MAVEN_VERSION)-bin.tar.gz" | tar xz -C $(HOME)/.local/opt; \
+		ln -sf $(HOME)/.local/opt/apache-maven-$(MAVEN_VERSION)/bin/mvn $(LOCAL_BIN)/mvn; \
 	}
 
 #deps-install: @ Install Java and Maven via mise (reads .mise.toml)
@@ -179,42 +179,76 @@ mermaid-lint: deps-docker
 	@if [ "$$ACT" = "true" ]; then \
 		echo "Skipping mermaid-lint under act (docker-in-docker unavailable)"; \
 		exit 0; \
+	fi
+	@set -euo pipefail; \
+	MD_FILES=$$(grep -lF '```mermaid' README.md CLAUDE.md 2>/dev/null || true); \
+	if [ -z "$$MD_FILES" ]; then \
+		echo "No Mermaid blocks found — skipping."; \
+		exit 0; \
 	fi; \
-	grep -l '^```mermaid' README.md 2>/dev/null >/dev/null || { echo "No Mermaid blocks found; skipping."; exit 0; }; \
-	tmpdir=$$(mktemp -d); \
-	cp README.md $$tmpdir/; \
-	docker run --rm -u $$(id -u):$$(id -g) -v $$tmpdir:/data minlag/mermaid-cli:$(MERMAID_CLI_VERSION) \
-		-i /data/README.md -o /data/out.md >/dev/null 2>&1; \
-	rc=$$?; rm -rf $$tmpdir; \
-	if [ $$rc -ne 0 ]; then echo "Mermaid lint FAILED"; exit 1; fi; \
-	echo "Mermaid lint OK"
+	IMAGE=minlag/mermaid-cli:$(MERMAID_CLI_VERSION); \
+	for attempt in 1 2 3; do \
+		if docker pull --quiet "$$IMAGE" >/dev/null 2>&1; then break; fi; \
+		if [ "$$attempt" -eq 3 ]; then \
+			echo "ERROR: docker pull $$IMAGE failed after 3 attempts (Docker Hub flake or rate limit)"; \
+			exit 1; \
+		fi; \
+		delay=$$((attempt * 5)); \
+		echo "  ! docker pull failed (attempt $$attempt/3); retrying in $${delay}s..."; \
+		sleep "$$delay"; \
+	done; \
+	FAILED=0; \
+	for md in $$MD_FILES; do \
+		echo "Validating Mermaid blocks in $$md..."; \
+		LOG=$$(mktemp); \
+		if docker run --rm -v "$$PWD:/data:ro" \
+			"$$IMAGE" \
+			-i "/data/$$md" -o "/tmp/$$(basename $$md .md).svg" >"$$LOG" 2>&1; then \
+			echo "  ✓ All blocks rendered cleanly."; \
+		else \
+			echo "  ✗ Parse error in $$md:"; \
+			sed 's/^/    /' "$$LOG"; \
+			FAILED=$$((FAILED + 1)); \
+		fi; \
+		rm -f "$$LOG"; \
+	done; \
+	if [ "$$FAILED" -gt 0 ]; then \
+		echo "Mermaid lint: $$FAILED file(s) had parse errors."; \
+		exit 1; \
+	fi
 
 #deps-prune: @ Analyze declared-but-unused / used-but-undeclared dependencies
 deps-prune: deps
 	@mvn -B dependency:analyze -Ddependency-check.skip=true
 
 #deps-prune-check: @ Fail build on declared-but-unused dependencies
+# `test-compile` is required so the analyzer can see test-scope usage —
+# `analyze-only` does NOT trigger compilation; without it, junit-jupiter-api
+# and wiremock are flagged as unused on a fresh checkout (real CI failure).
 deps-prune-check: deps
-	@mvn -B dependency:analyze-only -DfailOnWarning=true -Ddependency-check.skip=true
+	@mvn -B test-compile dependency:analyze-only -DfailOnWarning=true -Ddependency-check.skip=true
 
-#static-check: @ Composite fast quality gate (format-check + lint + secrets + trivy-fs + mermaid-lint)
-static-check: format-check lint secrets trivy-fs mermaid-lint
+#static-check: @ Composite fast quality gate (format-check + lint + secrets + trivy-fs + mermaid-lint + deps-prune-check)
+static-check: format-check lint secrets trivy-fs mermaid-lint deps-prune-check
 	@echo "=== static-check OK ==="
 
 #vulncheck: @ Alias for cve-check (canonical target name)
 vulncheck: cve-check
 
 #cve-check: @ Run OWASP dependency vulnerability scan
+# `-DnvdApiServerId=nvd` references the literal id of the <server> block written by
+# maven-settings-ossindex; the API key value lives in ~/.m2/settings.xml only —
+# never in argv. Safe on multi-user hosts (`ps -ef`, `/proc/<pid>/cmdline`).
 cve-check: deps maven-settings-ossindex
 	@MAVEN_OPTS="$${MAVEN_OPTS:-} --add-modules jdk.incubator.vector" \
-		mvn -B dependency-check:check $$([ -n "$$NVD_API_KEY" ] && echo "-DnvdApiKey=$$NVD_API_KEY")
+		mvn -B dependency-check:check $$([ -n "$$NVD_API_KEY" ] && echo "-DnvdApiServerId=nvd")
 
 #coverage-generate: @ Generate code coverage report
 coverage-generate: deps
 	@mvn -B test -Ddependency-check.skip=true jacoco:report
 
 #coverage-check: @ Verify code coverage meets minimum threshold (>70%)
-coverage-check: deps
+coverage-check: coverage-generate
 	@mvn -B jacoco:check -Ddependency-check.skip=true
 
 #coverage-open: @ Open code coverage report
@@ -225,22 +259,36 @@ coverage-open:
 ci: deps static-check test integration-test coverage-check build
 	@echo "=== CI Complete ==="
 
-#ci-run: @ Run GitHub Actions workflow locally using act
+#ci-run: @ Run GitHub Actions workflow locally using act (jobs serialized)
+# `--pull=false` avoids the Docker 25+ containerd snapshotter race
+# (`RWLayer of container <id> is unexpectedly nil`) on repeat runs.
+# Per-run mktemp artifact path + random port lets concurrent ci-run
+# invocations across repos coexist (avoids host-global :34567 collision).
+# cve-check is gated on schedule/dispatch/tag in the workflow `if:` —
+# never selected by act `push` to main, so it is omitted from the loop.
 ci-run: deps-act
 	@docker container prune -f 2>/dev/null || true
 	@evt=$$(mktemp /tmp/act-push-event.XXXXXX.json); \
 	printf '{"ref":"refs/heads/main","repository":{"default_branch":"main","name":"$(APP_NAME)","full_name":"AndriyKalashnykov/$(APP_NAME)"}}' >"$$evt"; \
+	ACT_PORT=$$(shuf -i 40000-59999 -n 1); \
+	ARTIFACT_PATH=$$(mktemp -d -t act-artifacts.XXXXXX); \
 	secret_args=(); \
 	[ -n "$$NVD_API_KEY" ] && secret_args+=(--secret NVD_API_KEY); \
 	[ -n "$$OSS_INDEX_USER" ] && secret_args+=(--secret OSS_INDEX_USER); \
 	[ -n "$$OSS_INDEX_TOKEN" ] && secret_args+=(--secret OSS_INDEX_TOKEN); \
-	act push -W .github/workflows/ci.yml \
-		--container-architecture linux/amd64 \
-		--artifact-server-path /tmp/act-artifacts \
-		--eventpath "$$evt" \
-		--var ACT=true \
-		"$${secret_args[@]}"; \
-	rc=$$?; rm -f "$$evt"; exit $$rc
+	rc=0; \
+	for j in static-check test integration-test build; do \
+		echo "==== act push --job $$j ===="; \
+		act push -W .github/workflows/ci.yml --job $$j \
+			--container-architecture linux/amd64 \
+			--pull=false \
+			--artifact-server-port "$$ACT_PORT" \
+			--artifact-server-path "$$ARTIFACT_PATH" \
+			--eventpath "$$evt" \
+			--var ACT=true \
+			"$${secret_args[@]}" || { rc=$$?; break; }; \
+	done; \
+	rm -f "$$evt"; exit $$rc
 
 #release: @ Create a release (usage: make release VERSION=x.y.z)
 release: deps
@@ -259,12 +307,25 @@ release: deps
 	@git push
 	@echo "Release $(VERSION) complete."
 
-#maven-settings-ossindex: @ Create Maven settings for OSS Index credentials (no-op without env)
+#maven-settings-ossindex: @ Write ~/.m2/settings.xml with OSS Index and/or NVD API credentials when their env vars are set
+# `printf` is a bash builtin — values stay in shell memory, never enter argv.
+# Each <server> block is referenced by id from the OWASP plugin: `ossindex` is
+# read by the OSS Index analyzer (default convention); `nvd` is referenced
+# explicitly via `-DnvdApiServerId=nvd` in the cve-check recipe so the API key
+# value never crosses argv.
 maven-settings-ossindex:
-	@if [ -n "$$OSS_INDEX_USER" ] && [ -n "$$OSS_INDEX_TOKEN" ]; then \
-		mkdir -p ~/.m2 && \
-		printf '<settings>\n  <servers>\n    <server>\n      <id>ossindex</id>\n      <username>%s</username>\n      <password>%s</password>\n    </server>\n  </servers>\n</settings>\n' \
-			"$$OSS_INDEX_USER" "$$OSS_INDEX_TOKEN" > ~/.m2/settings.xml; \
+	@if [ -n "$$OSS_INDEX_USER$$OSS_INDEX_TOKEN" ] || [ -n "$$NVD_API_KEY" ]; then \
+		mkdir -p ~/.m2; \
+		{ \
+			printf '<settings>\n  <servers>\n'; \
+			if [ -n "$$OSS_INDEX_USER" ] && [ -n "$$OSS_INDEX_TOKEN" ]; then \
+				printf '    <server>\n      <id>ossindex</id>\n      <username>%s</username>\n      <password>%s</password>\n    </server>\n' "$$OSS_INDEX_USER" "$$OSS_INDEX_TOKEN"; \
+			fi; \
+			if [ -n "$$NVD_API_KEY" ]; then \
+				printf '    <server>\n      <id>nvd</id>\n      <password>%s</password>\n    </server>\n' "$$NVD_API_KEY"; \
+			fi; \
+			printf '  </servers>\n</settings>\n'; \
+		} > ~/.m2/settings.xml; \
 	fi
 
 #renovate-bootstrap: @ Install mise + Node for Renovate
