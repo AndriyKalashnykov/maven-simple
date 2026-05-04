@@ -78,8 +78,8 @@ Two independent module areas under `src/main/java/`:
 |----------------|---------|-------|
 | [HttpURLConnection](src/main/java/http/client/java/JavaHttpURLConnectionDemo.java) | `java.net` | Core JDK, low-level |
 | [java.net.http.HttpClient](src/main/java/http/client/java/JavaHttpClientDemo.java) | `java.net.http` | Modern JDK (Java 11+), async-capable |
-| [Apache HttpClient 5](src/main/java/http/client/apache) | `org.apache.httpcomponents.client5` | Long-standing library, fluent API |
-| [OkHttp](src/main/java/http/client/okhttp) | `com.squareup.okhttp3` | Square's HTTP stack |
+| [Apache HttpClient 5](src/main/java/http/client/apache/ApacheHttpClientUserDemo.java) | `org.apache.httpcomponents.client5` | Long-standing library, fluent API |
+| [OkHttp](src/main/java/http/client/okhttp/OkHttpDemo.java) | `com.squareup.okhttp3` | Square's HTTP stack |
 | [Retrofit](src/main/java/http/client/retrofit) | `com.squareup.retrofit2` | Type-safe REST over OkHttp, Gson converter |
 
 Shared models live under `http/client/model/`.
@@ -121,11 +121,11 @@ export OSS_INDEX_TOKEN=<ossindex-api-token>
 make cve-check
 ```
 
-The NVD key is passed to Maven automatically. OSS Index credentials are read from env vars via `~/.m2/settings.xml` (generated on demand by the `cve-check` target).
+Both the NVD API key and OSS Index credentials are written to `~/.m2/settings.xml` by the `maven-settings-ossindex` prerequisite of `cve-check`, then referenced by id (`-DnvdApiServerId=nvd`) — secret values never enter Maven's argv (visible to local users via `ps -ef`).
 
 ## Make Targets
 
-Run `make help` to see all available targets.
+Listed below; `make help` prints the same list.
 
 ### Build
 
@@ -154,7 +154,7 @@ Run `make help` to see all available targets.
 | `make secrets` | Scan repository for hardcoded secrets (gitleaks) |
 | `make trivy-fs` | Filesystem vulnerability/secret/misconfig scan |
 | `make mermaid-lint` | Validate Mermaid diagrams in Markdown (requires Docker) |
-| `make static-check` | Composite fast quality gate (format-check + lint + secrets + trivy-fs + mermaid-lint) |
+| `make static-check` | Composite fast quality gate (format-check + lint + secrets + trivy-fs + mermaid-lint + deps-prune-check) |
 | `make cve-check` | Run OWASP dependency vulnerability scan |
 | `make vulncheck` | Alias for `cve-check` |
 
@@ -198,8 +198,8 @@ GitHub Actions runs on every push to `main`, tags `v*`, pull requests, a weekly 
 | Job | Triggers | Runs |
 |-----|----------|------|
 | `changes` | every event | [`dorny/paths-filter`](https://github.com/dorny/paths-filter) detector — gates heavy jobs so doc-only changes skip CI without deadlocking the `ci-pass` required check |
-| `static-check` | after `changes` (when code changes) | `make static-check` (format-check + lint + gitleaks + Trivy filesystem scan + mermaid-lint) |
-| `test` | after `changes` + `static-check` | `make coverage-generate` + `make coverage-check` (uploads `coverage` artifact) |
+| `static-check` | after `changes` (when code changes) | `make static-check` (format-check + lint + gitleaks + Trivy filesystem scan + mermaid-lint + deps-prune-check) |
+| `test` | after `changes` + `static-check` | `make coverage-check` (transitively runs tests + `jacoco:report`; uploads `coverage-report` artifact) |
 | `integration-test` | after `changes` + `static-check` | `make integration-test` (WireMock-stubbed HTTP client tests) |
 | `build` | after `changes` + `static-check` | `make build` |
 | `cve-check` | tags `v*`, weekly schedule, manual dispatch | `make cve-check` with cached NVD database (uploads `cve-report` artifact) |

@@ -26,7 +26,7 @@ make format-check       # Verify Java sources are formatted
 make secrets            # Scan for hardcoded secrets (gitleaks)
 make trivy-fs           # Filesystem vulnerability/secret/misconfig scan
 make mermaid-lint       # Validate Mermaid diagrams (requires Docker)
-make static-check       # Composite fast quality gate (format-check + lint + secrets + trivy-fs + mermaid-lint)
+make static-check       # Composite fast quality gate (format-check + lint + secrets + trivy-fs + mermaid-lint + deps-prune-check)
 make clean              # Cleanup
 make ci                 # Full CI pipeline (static-check, test, coverage-check, build)
 make ci-run             # Run GitHub Actions workflow locally using act
@@ -69,6 +69,8 @@ Three-layer test pyramid:
 | Integration | `make integration-test` | `*IT.java` via `maven-failsafe-plugin` (activated by the `integration-test` Maven profile) | seconds (WireMock in-process) |
 | E2E | _N/A_ | Library/demo project — no deployable unit | — |
 
+> **No `e2e` CI job by design.** This project has no service to hit, so `integration-test` (`*IT.java` with WireMock-stubbed upstream) is the canonical end-of-pipeline test. Per `/ci-workflow` skill, the `e2e` requirement does not apply to libraries/demos with no deployable unit.
+
 JUnit 6 tests in `src/test/java/` mirror the main source structure. Legacy unit tests invoke `main()` methods (these make live HTTP requests and are fragile). New `*IT.java` tests use [WireMock](https://wiremock.org/) to stub upstream HTTP services — see `OkHttpClientIT.java` as the reference pattern. Coverage enforced at 70% via JaCoCo plugin (`jacoco:check`).
 
 ## Static Analysis
@@ -79,7 +81,8 @@ JUnit 6 tests in `src/test/java/` mirror the main source structure. Legacy unit 
 - `lint` — `mvn validate` + `mvn compile` with `failOnWarning=true`
 - `secrets` — [gitleaks](https://github.com/gitleaks/gitleaks) scan for hardcoded secrets
 - `trivy-fs` — [Trivy](https://github.com/aquasecurity/trivy) filesystem scan for vuln/secret/misconfig (CRITICAL/HIGH fails build; MEDIUM informational)
-- `mermaid-lint` — [mermaid-cli](https://github.com/mermaid-js/mermaid-cli) validates Mermaid blocks in `README.md` (Docker-based)
+- `mermaid-lint` — [mermaid-cli](https://github.com/mermaid-js/mermaid-cli) validates Mermaid blocks in `README.md` and `CLAUDE.md` (Docker-based)
+- `deps-prune-check` — fails the build on declared-but-unused Maven dependencies (`mvn dependency:analyze-only -DfailOnWarning`)
 
 Run `make format` to auto-apply google-java-format. `cve-check` (OWASP dependency-check) is kept separate — it runs on release tags (`v*`) because of its long runtime.
 
