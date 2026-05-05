@@ -33,7 +33,9 @@ jobs:
         uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d # v4.0.1
         id: filter
         with:
-          base: main
+          # `base` is consulted only on push events; on pull_request the action uses
+          # PR.base.ref and emits a warning if `base` is set. Gate via expression.
+          base: ${{ github.event_name == 'push' && 'main' || '' }}
           filters: |
             code:
               - '!(**.md|docs/**|specs/**|LICENSE|.gitignore|.claudeignore|.claude/**|benchmarks/**|**.png|**.jpg|**.gif|**.svg)'
