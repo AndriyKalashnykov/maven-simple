@@ -9,22 +9,33 @@ Side-by-side comparison of five Java HTTP clients (`HttpURLConnection`, `java.ne
 
 ```mermaid
 flowchart LR
-    App["Example main() classes"] --> HC{HTTP Clients}
-    HC -->|"GET /neo/rest/v1/feed"| API[("NASA NEO API")]
-    API -->|JSON| JP{JSON Parsers}
-    JP --> App
+    App["Example main() classes<br/>Java 25"]
+    NEO[("NASA NEO API<br/>api.nasa.gov")]
 
-    HC --- HC1[HttpURLConnection]
-    HC --- HC2["java.net.http.HttpClient"]
-    HC --- HC3[Apache HttpClient 5]
-    HC --- HC4[OkHttp]
-    HC --- HC5[Retrofit]
+    subgraph HTTPC["HTTP Clients"]
+        direction TB
+        HC1["HttpURLConnection (JDK)"]
+        HC2["java.net.http.HttpClient (JDK 11+)"]
+        HC3["Apache HttpClient 5.6.1"]
+        HC4["OkHttp 5.3.2"]
+        HC5["Retrofit 3.0.0"]
+    end
 
-    JP --- JP1["Jackson tree + databind"]
-    JP --- JP2["Gson tree + databind"]
-    JP --- JP3[JsonPath]
-    JP --- JP4[Jackson JsonPointer]
+    subgraph JSONP["JSON Parsers"]
+        direction TB
+        JP1["Jackson 3.1.3 (tree + databind)"]
+        JP2["Gson 2.14.0 (tree + databind)"]
+        JP3["JsonPath 3.0.0"]
+        JP4["Jackson JsonPointer 3.1.3"]
+    end
+
+    App --> HTTPC
+    HTTPC -->|"GET /neo/rest/v1/feed"| NEO
+    NEO -->|"JSON"| JSONP
+    JSONP --> App
 ```
+
+Each `main()` class under `src/main/java/` issues the same `GET /neo/rest/v1/feed` request via one of the five HTTP clients, then deserializes the response via one of the four JSON-parsing approaches. The grid lets you compare ergonomics, dependency footprint, async support, and schema handling side-by-side against an unchanging upstream call. Container labels carry library versions so the diagram tracks the Tech Stack table below.
 
 ## Tech Stack
 
@@ -35,7 +46,7 @@ flowchart LR
 | Tests | [JUnit Jupiter](https://junit.org/junit5/) 6.0.3 (unit) + [WireMock](https://wiremock.org/) 3.13.1 (integration via Failsafe `*IT.java`) |
 | Coverage | [JaCoCo](https://www.jacoco.org/jacoco/) (70% instruction + branch) |
 | HTTP clients | `java.net.HttpURLConnection`, `java.net.http.HttpClient`, [Apache HttpClient 5](https://hc.apache.org/) 5.6.1, [OkHttp](https://square.github.io/okhttp/) 5.3.2, [Retrofit](https://square.github.io/retrofit/) 3.0.0 |
-| JSON | [Jackson](https://github.com/FasterXML/jackson) 3.1.2 (`tools.jackson.core`), [Gson](https://github.com/google/gson) 2.14.0, [JsonPath](https://github.com/json-path/JsonPath) 3.0.0 |
+| JSON | [Jackson](https://github.com/FasterXML/jackson) 3.1.3 (`tools.jackson.core`), [Gson](https://github.com/google/gson) 2.14.0, [JsonPath](https://github.com/json-path/JsonPath) 3.0.0 |
 | Formatting | [google-java-format](https://github.com/google/google-java-format) |
 | Security | [gitleaks](https://github.com/gitleaks/gitleaks), [Trivy](https://github.com/aquasecurity/trivy), [OWASP dependency-check](https://dependency-check.github.io/DependencyCheck/) |
 | CI | GitHub Actions; local replay via [act](https://github.com/nektos/act) |
@@ -175,9 +186,8 @@ Listed below; `make help` prints the same list.
 | `make deps-act` | Install `act` into `~/.local/bin` |
 | `make deps-gitleaks` | Install `gitleaks` into `~/.local/bin` |
 | `make deps-trivy` | Install `trivy` into `~/.local/bin` |
+| `make deps-docker` | Verify Docker is available (internal helper for `mermaid-lint`; skipped under act) |
 | `make deps-check` | Show required tools and installation status |
-| `make deps-updates` | Print available dependency updates |
-| `make deps-update` | Update dependencies to latest releases |
 | `make deps-prune` | Analyze declared-but-unused / used-but-undeclared dependencies |
 | `make deps-prune-check` | Fail build on declared-but-unused dependencies |
 
@@ -199,7 +209,7 @@ GitHub Actions runs on every push to `main`, tags `v*`, pull requests, a weekly 
 |-----|----------|------|
 | `changes` | every event | [`dorny/paths-filter`](https://github.com/dorny/paths-filter) detector — gates heavy jobs so doc-only changes skip CI without deadlocking the `ci-pass` required check |
 | `static-check` | after `changes` (when code changes) | `make static-check` (format-check + lint + gitleaks + Trivy filesystem scan + mermaid-lint + deps-prune-check) |
-| `test` | after `changes` + `static-check` | `make coverage-check` (transitively runs tests + `jacoco:report`; uploads `coverage-report` artifact) |
+| `test` | after `changes` + `static-check` | `make coverage-generate` (tests + `jacoco:report`) then `make coverage-check` (70% threshold); uploads `coverage-report` artifact |
 | `integration-test` | after `changes` + `static-check` | `make integration-test` (WireMock-stubbed HTTP client tests) |
 | `build` | after `changes` + `static-check` | `make build` |
 | `cve-check` | tags `v*`, weekly schedule, manual dispatch | `make cve-check` with cached NVD database (uploads `cve-report` artifact) |
