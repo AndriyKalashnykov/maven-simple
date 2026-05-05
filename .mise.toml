@@ -1,5 +1,5 @@
 [tools]
-# renovate: datasource=java-version depName=java
+# renovate: datasource=adoptium-java depName=java
 java = "temurin-25.0.3+9.0.LTS"
 # renovate: datasource=maven depName=org.apache.maven:apache-maven
 maven = "3.9.15"

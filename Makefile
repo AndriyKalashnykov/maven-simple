@@ -48,8 +48,14 @@ help:
 	@grep -E '[a-zA-Z\.\-]+:.*?@ .*$$' $(MAKEFILE_LIST)| tr -d '#' | awk 'BEGIN {FS = ":.*?@ "}; {printf "\033[32m%-30s\033[0m - %s\n", $$1, $$2}'
 
 #deps: @ Check required tools; auto-install mise (no root) and mise-pinned tools if missing
+# `mise install` runs unconditionally — in CI, jdx/mise-action has already provisioned mise
+# and the toolchain, so this becomes a no-op. The `[ -z "$$CI" ]` guard is reserved for
+# the curl bootstrap (mise itself isn't on the runner before jdx/mise-action runs).
 deps:
-	@if [ -z "$$CI" ] && ! command -v mise >/dev/null 2>&1; then \
+	@if ! command -v mise >/dev/null 2>&1; then \
+		if [ -n "$$CI" ]; then \
+			echo "Error: mise not found in CI; jdx/mise-action should have installed it"; exit 1; \
+		fi; \
 		echo "Installing mise (no root required, installs to ~/.local/bin)..."; \
 		curl -fsSL https://mise.run | sh; \
 		echo ""; \
@@ -58,7 +64,7 @@ deps:
 		echo '  zsh:  echo '\''eval "$$(~/.local/bin/mise activate zsh)"''  >> ~/.zshrc'; \
 		exit 0; \
 	fi
-	@if [ -z "$$CI" ] && command -v mise >/dev/null 2>&1; then mise install; fi
+	@mise install
 	@command -v java >/dev/null 2>&1 || mise exec -- command -v java >/dev/null 2>&1 || { echo "Error: Java required. Run: make deps-install"; exit 1; }
 	@command -v mvn  >/dev/null 2>&1 || mise exec -- command -v mvn  >/dev/null 2>&1 || { echo "Error: Maven required. Run: make deps-install"; exit 1; }
 	@echo "All required dependencies are available"
@@ -74,15 +80,13 @@ deps-maven:
 
 #deps-install: @ Install Java and Maven via mise (reads .mise.toml)
 deps-install:
+	@command -v mise >/dev/null 2>&1 || { echo "Installing mise..."; curl -fsSL https://mise.run | sh; }
+	@mise install
 	@if [ -z "$$CI" ]; then \
-		command -v mise >/dev/null 2>&1 || { echo "Installing mise..."; curl -fsSL https://mise.run | sh; }; \
-		mise install; \
 		echo ""; \
 		echo "Tools installed. If this is a fresh install, activate mise in your shell:"; \
 		echo "  bash: echo 'eval \"\$$(~/.local/bin/mise activate bash)\"' >> ~/.bashrc"; \
 		echo "  zsh:  echo 'eval \"\$$(~/.local/bin/mise activate zsh)\"'  >> ~/.zshrc"; \
-	else \
-		echo "CI environment detected; skipping mise install (toolchain provided by workflow)."; \
 	fi
 
 #deps-act: @ Install act for local CI (installs to ~/.local/bin, no root)
@@ -349,17 +353,8 @@ renovate-validate: renovate-bootstrap
 		npx --yes renovate@$(RENOVATE_VERSION) --platform=local; \
 	fi
 
-#deps-updates: @ Print project dependencies updates
-deps-updates: deps
-	@mvn -B versions:display-dependency-updates
-
-#deps-update: @ Update project dependencies to latest releases
-deps-update: deps-updates
-	@mvn -B versions:use-latest-releases
-	@mvn -B versions:commit
-
 .PHONY: help deps deps-maven deps-install deps-act deps-gitleaks deps-trivy deps-docker deps-check \
-	deps-updates deps-update deps-prune deps-prune-check \
+	deps-prune deps-prune-check \
 	clean build test integration-test lint format format-check secrets trivy-fs mermaid-lint static-check \
 	ci ci-run release vulncheck cve-check \
 	coverage-generate coverage-check coverage-open \

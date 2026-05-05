@@ -87,16 +87,10 @@
       ]
     },
     {
-      "description": "Group OkHttp dependencies (including KMP -jvm artifacts)",
-      "groupName": "OkHttp",
+      "description": "Group Retrofit + OkHttp into one PR — Retrofit 3.x ⇔ OkHttp 5.x is the only supported pairing; bumping them together prevents version drift.",
+      "groupName": "Retrofit + OkHttp",
       "matchPackageNames": [
-        "/^com\\.squareup\\.okhttp3/"
-      ]
-    },
-    {
-      "description": "Group Retrofit dependencies",
-      "groupName": "Retrofit",
-      "matchPackageNames": [
+        "/^com\\.squareup\\.okhttp3/",
         "/^com\\.squareup\\.retrofit2/"
       ]
     },

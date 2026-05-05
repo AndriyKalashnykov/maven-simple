@@ -91,14 +91,14 @@
         <dependency>
             <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>3.1.2</version>
+            <version>3.1.3</version>
         </dependency>
 
         <!-- Declared directly: tree-model code references jackson-core types (transitive of jackson-databind) -->
         <dependency>
             <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <version>3.1.2</version>
+            <version>3.1.3</version>
         </dependency>
 
         <!-- Jackson 3.x reuses the legacy 2.x annotations coordinate (com.fasterxml.jackson.annotation.*).
@@ -168,7 +168,7 @@
         <dependency>
             <groupId>org.wiremock</groupId>
             <artifactId>wiremock</artifactId>
-            <version>3.13.1</version>
+            <version>3.13.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

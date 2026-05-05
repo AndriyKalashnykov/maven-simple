@@ -30,9 +30,10 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Detect path filter
-        uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
+        uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d # v4.0.1
         id: filter
         with:
+          base: main
           filters: |
             code:
               - '!(**.md|docs/**|specs/**|LICENSE|.gitignore|.claudeignore|.claude/**|benchmarks/**|**.png|**.jpg|**.gif|**.svg)'
@@ -49,15 +50,18 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up JDK
-        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
+      - name: Set up mise
+        uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
         with:
-          java-version-file: .java-version
-          distribution: 'temurin'
-          cache: 'maven'
+          install: true
+          cache: true
 
-      - name: Install Maven
-        run: make deps-maven
+      - name: Cache Maven repository
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: ~/.m2/repository
+          key: maven-${{ hashFiles('pom.xml') }}
+          restore-keys: maven-
 
       - name: Static check
         run: make static-check
@@ -71,15 +75,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - name: Set up JDK
-        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
+      - name: Set up mise
+        uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
         with:
-          java-version-file: .java-version
-          distribution: 'temurin'
-          cache: 'maven'
+          install: true
+          cache: true
 
-      - name: Install Maven
-        run: make deps-maven
+      - name: Cache Maven repository
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: ~/.m2/repository
+          key: maven-${{ hashFiles('pom.xml') }}
+          restore-keys: maven-
+
+      - name: Test with coverage
+        run: make coverage-generate
 
       - name: Verify coverage threshold
         run: make coverage-check
@@ -103,15 +113,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - name: Set up JDK
-        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
+      - name: Set up mise
+        uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
         with:
-          java-version-file: .java-version
-          distribution: 'temurin'
-          cache: 'maven'
+          install: true
+          cache: true
 
-      - name: Install Maven
-        run: make deps-maven
+      - name: Cache Maven repository
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: ~/.m2/repository
+          key: maven-${{ hashFiles('pom.xml') }}
+          restore-keys: maven-
 
       - name: Integration test
         run: make integration-test
@@ -125,15 +138,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - name: Set up JDK
-        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
+      - name: Set up mise
+        uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
         with:
-          java-version-file: .java-version
-          distribution: 'temurin'
-          cache: 'maven'
+          install: true
+          cache: true
 
-      - name: Install Maven
-        run: make deps-maven
+      - name: Cache Maven repository
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: ~/.m2/repository
+          key: maven-${{ hashFiles('pom.xml') }}
+          restore-keys: maven-
 
       - name: Build
         run: make build
@@ -147,15 +163,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - name: Set up JDK
-        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
+      - name: Set up mise
+        uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
         with:
-          java-version-file: .java-version
-          distribution: 'temurin'
-          cache: 'maven'
+          install: true
+          cache: true
 
-      - name: Install Maven
-        run: make deps-maven
+      - name: Cache Maven repository
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: ~/.m2/repository
+          key: maven-${{ hashFiles('pom.xml') }}
+          restore-keys: maven-
 
       - name: Cache NVD database
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
