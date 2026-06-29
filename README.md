@@ -45,11 +45,11 @@ The two areas are **independent**. Each `main()` class under `http/client/{java,
 | Component | Technology |
 |-----------|------------|
 | Language | Java 25 LTS (Temurin via [mise](https://mise.jdx.dev/)) |
-| Build | [Maven](https://maven.apache.org/) 3.9.15 (pinned via `.mise.toml`; enforcer allows 3.6.3+) |
-| Tests | [JUnit Jupiter](https://junit.org/junit5/) 6.0.3 (unit) + [WireMock](https://wiremock.org/) 3.13.2 (integration via Failsafe `*IT.java`) |
+| Build | [Maven](https://maven.apache.org/) 3.9.16 (pinned via `.mise.toml`; enforcer allows 3.6.3+) |
+| Tests | [JUnit Jupiter](https://junit.org/junit5/) 6.1.1 (unit) + [WireMock](https://wiremock.org/) 3.13.2 (integration via Failsafe `*IT.java`) |
 | Coverage | [JaCoCo](https://www.jacoco.org/jacoco/) (70% instruction + branch) |
-| HTTP clients | `java.net.HttpURLConnection`, `java.net.http.HttpClient`, [Apache HttpClient 5](https://hc.apache.org/) 5.6.1, [OkHttp](https://square.github.io/okhttp/) 5.3.2, [Retrofit](https://square.github.io/retrofit/) 3.0.0 |
-| JSON | [Jackson](https://github.com/FasterXML/jackson) 3.1.4 (`tools.jackson.core`), [Gson](https://github.com/google/gson) 2.14.0, [JsonPath](https://github.com/json-path/JsonPath) 3.0.0 |
+| HTTP clients | `java.net.HttpURLConnection`, `java.net.http.HttpClient`, [Apache HttpClient 5](https://hc.apache.org/) 5.6.1, [OkHttp](https://square.github.io/okhttp/) 5.4.0, [Retrofit](https://square.github.io/retrofit/) 3.0.0 |
+| JSON | [Jackson](https://github.com/FasterXML/jackson) 3.2.0 (`tools.jackson.core`), [Gson](https://github.com/google/gson) 2.14.0, [JsonPath](https://github.com/json-path/JsonPath) 3.0.0 |
 | Formatting | [google-java-format](https://github.com/google/google-java-format) |
 | Security | [gitleaks](https://github.com/gitleaks/gitleaks), [Trivy](https://github.com/aquasecurity/trivy), [OWASP dependency-check](https://dependency-check.github.io/DependencyCheck/) |
 | CI | GitHub Actions; local replay via [act](https://github.com/nektos/act) |
@@ -71,10 +71,10 @@ make ci        # or run the full CI pipeline (static-check, test, coverage-check
 | [GNU Make](https://www.gnu.org/software/make/) | 3.81+ | Build orchestration |
 | [Git](https://git-scm.com/) | 2.0+ | Version control, releases |
 | [JDK](https://adoptium.net/) | 25+ | Java runtime and compiler (source: `.java-version`) |
-| [Maven](https://maven.apache.org/) | 3.6.3+ | Build and dependency management (3.9.15 pinned in `.mise.toml`) |
+| [Maven](https://maven.apache.org/) | 3.6.3+ | Build and dependency management (3.9.16 pinned in `.mise.toml`) |
 | [mise](https://mise.jdx.dev/) | latest | Java/Maven version manager (auto-installed by `make deps`) |
 | [Docker](https://www.docker.com/) | latest | Required by `act` for local CI |
-| [act](https://github.com/nektos/act) | 0.2.87+ | Local CI runner for `make ci-run` (installed via `make deps-act`) |
+| [act](https://github.com/nektos/act) | 0.2.89+ | Local CI runner for `make ci-run` (installed via `make deps-act`) |
 
 Install everything:
 
