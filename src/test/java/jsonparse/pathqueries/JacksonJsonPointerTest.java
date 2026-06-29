@@ -1,17 +1,31 @@
 package jsonparse.pathqueries;
 
-import java.io.IOException;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class JacksonJsonPointerTest {
-
-  protected static final Logger LOGGER = LoggerFactory.getLogger(JacksonJsonPointerTest.class);
+class JacksonJsonPointerTest {
 
   @Test
-  public void mainTest() throws IOException {
+  @DisplayName("Jackson JsonPointer /element_count resolves the NEO count from source.json")
+  void resolvesNeoCountViaPointer() throws Exception {
+    String out = captureMain();
+    assertTrue(out.contains("NEO count: 101"), out);
+  }
 
-    JacksonJsonPointer.main(new String[] {});
+  private static String captureMain() throws Exception {
+    PrintStream original = System.out;
+    ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(buffer, true, StandardCharsets.UTF_8));
+    try {
+      JacksonJsonPointer.main(new String[] {});
+    } finally {
+      System.setOut(original);
+    }
+    return buffer.toString(StandardCharsets.UTF_8);
   }
 }

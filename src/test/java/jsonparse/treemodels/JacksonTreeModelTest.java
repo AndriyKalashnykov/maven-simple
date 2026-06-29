@@ -1,17 +1,34 @@
 package jsonparse.treemodels;
 
-import java.io.IOException;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class JacksonTreeModelTest {
-
-  protected static final Logger LOGGER = LoggerFactory.getLogger(JacksonTreeModelTest.class);
+class JacksonTreeModelTest {
 
   @Test
-  public void mainTest() throws IOException {
+  @DisplayName(
+      "Jackson tree model reports NEO count, hazardous count, and fastest NEO from source.json")
+  void parsesNeoCountHazardousAndFastest() throws Exception {
+    String out = captureMain();
+    assertTrue(out.contains("NEO count: 101"), out);
+    assertTrue(out.contains("Potentially hazardous asteroids: 19"), out);
+    assertTrue(out.contains("Fastest NEO is: 526898 (2007 HR)"), out);
+  }
 
-    JacksonTreeModel.main(new String[] {});
+  private static String captureMain() throws Exception {
+    PrintStream original = System.out;
+    ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(buffer, true, StandardCharsets.UTF_8));
+    try {
+      JacksonTreeModel.main(new String[] {});
+    } finally {
+      System.setOut(original);
+    }
+    return buffer.toString(StandardCharsets.UTF_8);
   }
 }

@@ -1,18 +1,46 @@
 package http.client.apache;
 
-import java.io.IOException;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class ApacheHttpClientUserDemoTest {
+/**
+ * Offline smoke test: runs {@link ApacheHttpClientUserDemo#main} end-to-end against an in-process
+ * WireMock stub so {@code make test} exercises the demo wiring without a live network call.
+ * Contract assertions live in {@link ApacheHttpClientIT}.
+ */
+@WireMockTest
+class ApacheHttpClientUserDemoTest {
 
-  protected static final Logger LOGGER =
-      LoggerFactory.getLogger(ApacheHttpClientUserDemoTest.class);
+  private static final Path FIXTURE =
+      Path.of("src/test/resources/fixtures/article-users-page2.json");
 
   @Test
-  public void mainTest() throws IOException {
-
-    ApacheHttpClientUserDemo.main(new String[] {});
+  @DisplayName("main() fetches and parses the page from a stubbed server")
+  void mainAgainstStub(WireMockRuntimeInfo wm) throws Exception {
+    stubFor(
+        get(urlPathEqualTo("/api/article_users"))
+            .willReturn(
+                aResponse()
+                    .withStatus(200)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody(Files.readString(FIXTURE))));
+    System.setProperty("articleUsersUrl", wm.getHttpBaseUrl() + "/api/article_users?page=2");
+    try {
+      ApacheHttpClientUserDemo.main(new String[] {});
+    } finally {
+      System.clearProperty("articleUsersUrl");
+    }
+    verify(getRequestedFor(urlPathEqualTo("/api/article_users")));
   }
 }

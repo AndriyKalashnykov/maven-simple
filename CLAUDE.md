@@ -75,7 +75,12 @@ Three-layer test pyramid:
 
 > **No `e2e` CI job by design.** This project has no service to hit, so `integration-test` (`*IT.java` with WireMock-stubbed upstream) is the canonical end-of-pipeline test. Per `/ci-workflow` skill, the `e2e` requirement does not apply to libraries/demos with no deployable unit.
 
-JUnit 6 tests in `src/test/java/` mirror the main source structure. Legacy unit tests invoke `main()` methods (these make live HTTP requests and are fragile). New `*IT.java` tests use [WireMock](https://wiremock.org/) to stub upstream HTTP services — see `OkHttpClientIT.java` as the reference pattern. Coverage enforced at 70% via JaCoCo plugin (`jacoco:check`).
+JUnit 6 tests in `src/test/java/` mirror the main source structure. **`make test` is fully offline** — no live network. The HTTP-client coverage is split two ways:
+
+- **`*IT.java`** (failsafe) — the asserting integration layer: each of the five clients (`JavaHttpUrlConnectionIT`, `JavaHttpClientIT`, `ApacheHttpClientIT`, `OkHttpClientIT`, `RetrofitClientIT`) drives the real client + JSON parse into `Page`/`User` against an in-process [WireMock](https://wiremock.org/) stub and asserts the parsed response shape + the rate-limited (429) error path. `OkHttpClientIT.java` is the reference pattern.
+- **`*DemoTest.java`** (surefire) — offline smoke of each `*Demo.main()` against the same in-process WireMock stub, so the demo wiring is covered by `make test` without a live call. The demos' request target is injected via the **`articleUsersUrl`** / **`articleUsersBaseUrl`** system properties (or the `ARTICLE_USERS_URL` / `ARTICLE_USERS_BASE_URL` env vars), defaulting to the live `jsonmock.hackerrank.com` API when run directly (`java … <Demo>`).
+
+The `jsonparse/**` tests (surefire) run each parsing demo against the committed local `source.json` and assert the real computed values (NEO count 101, 19 hazardous, fastest NEO). Coverage enforced at 70% via JaCoCo plugin (`jacoco:check`).
 
 ## Static Analysis
 

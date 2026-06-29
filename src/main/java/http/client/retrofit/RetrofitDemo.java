@@ -18,6 +18,14 @@ public class RetrofitDemo {
 
   protected static final Logger LOGGER = LoggerFactory.getLogger(RetrofitDemo.class);
 
+  // Retrofit base URL — defaults to the live demo API host; overridable for offline tests
+  // via -DarticleUsersBaseUrl=... or the ARTICLE_USERS_BASE_URL env var.
+  static final String BASE_URL =
+      System.getProperty(
+          "articleUsersBaseUrl",
+          System.getenv()
+              .getOrDefault("ARTICLE_USERS_BASE_URL", "https://jsonmock.hackerrank.com"));
+
   public interface PageClient {
     @GET("/api/article_users?page=2")
     @Headers("accept: application/json")
@@ -33,7 +41,7 @@ public class RetrofitDemo {
 
     Retrofit retrofit =
         new Retrofit.Builder()
-            .baseUrl("https://jsonmock.hackerrank.com")
+            .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build();
 
