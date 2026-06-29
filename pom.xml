@@ -48,7 +48,7 @@
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp-jvm</artifactId>
-            <version>5.3.2</version>
+            <version>5.4.0</version>
         </dependency>
 
         <!-- Retrofit -->
@@ -91,14 +91,14 @@
         <dependency>
             <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>3.1.4</version>
+            <version>3.2.0</version>
         </dependency>
 
         <!-- Declared directly: tree-model code references jackson-core types (transitive of jackson-databind) -->
         <dependency>
             <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <version>3.1.4</version>
+            <version>3.2.0</version>
         </dependency>
 
         <!-- Jackson 3.x reuses the legacy 2.x annotations coordinate (com.fasterxml.jackson.annotation.*).
@@ -155,13 +155,13 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>6.0.3</version>
+            <version>6.1.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>6.0.3</version>
+            <version>6.1.1</version>
             <scope>test</scope>
         </dependency>
 
@@ -210,7 +210,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.6.2</version>
+                <version>3.6.3</version>
                 <executions>
                     <execution>
                         <goals>
@@ -238,7 +238,7 @@
 
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.10.0</version>
+                <version>3.11.0</version>
                 <configuration>
                     <!-- Test-runtime dependency; not visible to compile-time dependency:analyze -->
                     <usedDependencies>
@@ -251,7 +251,7 @@
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
                 <!-- https://dependency-check.github.io/DependencyCheck/dependency-check-maven/ -->
-                <version>12.2.1</version>
+                <version>12.2.2</version>
                 <configuration>
                     <ossIndexServerId>ossindex</ossIndexServerId>
                 </configuration>
@@ -267,7 +267,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.14</version>
+                <version>0.8.15</version>
                 <configuration>
                     <rules>
                         <rule>
