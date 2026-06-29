@@ -1,18 +1,17 @@
-package jsonparse.databinding.compex.jackson;
+package jsonparse.databinding.complex.gson;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import jsonparse.databinding.complex.jackson.ComplexDataBindingJackson;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class ComplexDataBindingJacksonTest {
+class ComplexDataBindingGsonTest {
 
   @Test
-  @DisplayName("Jackson full-schema binding reports NEO count, hazardous count, and fastest NEO")
+  @DisplayName("Gson full-schema binding reports NEO count, hazardous count, and fastest NEO")
   void bindsFullSchemaAndComputesAggregates() throws Exception {
     String out = captureMain();
     assertTrue(out.contains("NEO count: 101"), out);
@@ -25,7 +24,7 @@ class ComplexDataBindingJacksonTest {
     ByteArrayOutputStream buffer = new ByteArrayOutputStream();
     System.setOut(new PrintStream(buffer, true, StandardCharsets.UTF_8));
     try {
-      ComplexDataBindingJackson.main(new String[] {});
+      ComplexDataBindingGson.main(new String[] {});
     } finally {
       System.setOut(original);
     }
