@@ -5,7 +5,7 @@
 
 # Java HTTP Clients & JSON Parsing Reference
 
-Side-by-side comparison of five Java HTTP clients (`HttpURLConnection`, `java.net.http.HttpClient`, Apache HttpClient 5, OkHttp, Retrofit) and four JSON-parsing approaches (tree model, simple data binding, full-schema data binding, path queries). Every implementation calls NASA's Near-Earth Objects (NEO) API with the same request and asserts the same response, so library trade-offs — ergonomics, dependency footprint, async support, schema handling — are directly visible.
+Side-by-side comparison of five Java HTTP clients (`HttpURLConnection`, `java.net.http.HttpClient`, Apache HttpClient 5, OkHttp, Retrofit) and four JSON-parsing approaches (tree model, simple data binding, full-schema data binding, path queries). Every implementation calls NASA's Near-Earth Objects (NEO) API with the same request and asserts the same response, so library trade-offs — ergonomics, dependency footprint, async support, schema handling — are directly visible. It doubles as a build-tooling reference: a **JUnit 6 + WireMock** test pyramid, **gitleaks / Trivy / OWASP dependency-check** security gates, **JaCoCo** 70% coverage enforcement, and a **GitHub Actions** CI pipeline (locally replayable via `act`).
 
 ```mermaid
 flowchart LR
@@ -23,10 +23,10 @@ flowchart LR
 
     subgraph JSONP["JSON Parsers"]
         direction TB
-        JP1["Jackson 3.1.3 (tree + databind)"]
+        JP1["Jackson 3.1.4 (tree + databind)"]
         JP2["Gson 2.14.0 (tree + databind)"]
         JP3["JsonPath 3.0.0"]
-        JP4["Jackson JsonPointer 3.1.3"]
+        JP4["Jackson JsonPointer 3.1.4"]
     end
 
     App --> HTTPC
@@ -43,14 +43,14 @@ Each `main()` class under `src/main/java/` issues the same `GET /neo/rest/v1/fee
 |-----------|------------|
 | Language | Java 25 LTS (Temurin via [mise](https://mise.jdx.dev/)) |
 | Build | [Maven](https://maven.apache.org/) 3.9.15 (pinned via `.mise.toml`; enforcer allows 3.6.3+) |
-| Tests | [JUnit Jupiter](https://junit.org/junit5/) 6.0.3 (unit) + [WireMock](https://wiremock.org/) 3.13.1 (integration via Failsafe `*IT.java`) |
+| Tests | [JUnit Jupiter](https://junit.org/junit5/) 6.0.3 (unit) + [WireMock](https://wiremock.org/) 3.13.2 (integration via Failsafe `*IT.java`) |
 | Coverage | [JaCoCo](https://www.jacoco.org/jacoco/) (70% instruction + branch) |
 | HTTP clients | `java.net.HttpURLConnection`, `java.net.http.HttpClient`, [Apache HttpClient 5](https://hc.apache.org/) 5.6.1, [OkHttp](https://square.github.io/okhttp/) 5.3.2, [Retrofit](https://square.github.io/retrofit/) 3.0.0 |
-| JSON | [Jackson](https://github.com/FasterXML/jackson) 3.1.3 (`tools.jackson.core`), [Gson](https://github.com/google/gson) 2.14.0, [JsonPath](https://github.com/json-path/JsonPath) 3.0.0 |
+| JSON | [Jackson](https://github.com/FasterXML/jackson) 3.1.4 (`tools.jackson.core`), [Gson](https://github.com/google/gson) 2.14.0, [JsonPath](https://github.com/json-path/JsonPath) 3.0.0 |
 | Formatting | [google-java-format](https://github.com/google/google-java-format) |
 | Security | [gitleaks](https://github.com/gitleaks/gitleaks), [Trivy](https://github.com/aquasecurity/trivy), [OWASP dependency-check](https://dependency-check.github.io/DependencyCheck/) |
 | CI | GitHub Actions; local replay via [act](https://github.com/nektos/act) |
-| Automation | [Renovate](https://docs.renovatebot.com/) (platform automerge) |
+| Automation | [Renovate](https://docs.renovatebot.com/) (automerge via its own re-validated run) |
 
 ## Quick Start
 
@@ -219,15 +219,15 @@ Pipeline: `changes` → `static-check` → `test` + `integration-test` + `build`
 
 ### Required Secrets
 
-| Secret | Required by | Purpose |
-|--------|-------------|---------|
-| `NVD_API_KEY` | `cve-check` | Avoid NVD rate limits — [request one](https://nvd.nist.gov/developers/request-an-api-key) |
-| `OSS_INDEX_USER` | `cve-check` | OSS Index account email — [register](https://ossindex.sonatype.org/user/register) |
-| `OSS_INDEX_TOKEN` | `cve-check` | OSS Index API token from account settings |
+| Secret | Type | Required by | Purpose |
+|--------|------|-------------|---------|
+| `NVD_API_KEY` | Secret | `cve-check` | Avoid NVD rate limits — [request one](https://nvd.nist.gov/developers/request-an-api-key) |
+| `OSS_INDEX_USER` | Secret | `cve-check` | OSS Index account email — [register](https://ossindex.sonatype.org/user/register) |
+| `OSS_INDEX_TOKEN` | Secret | `cve-check` | OSS Index API token from account settings |
 
 Set secrets via **Settings > Secrets and variables > Actions > New repository secret**.
 
-[Renovate](https://docs.renovatebot.com/) keeps dependencies up to date with platform automerge enabled.
+[Renovate](https://docs.renovatebot.com/) keeps dependencies up to date, automerging on green CI via its own re-validated run.
 
 ## Contributing
 

@@ -4,7 +4,7 @@ APP_NAME   := maven-simple
 CURRENTTAG := $(shell git describe --tags --abbrev=0 2>/dev/null || echo "dev")
 
 SHELL := /bin/bash
-export PATH := $(HOME)/.local/bin:$(PATH)
+export PATH := $(HOME)/.local/share/mise/shims:$(HOME)/.local/bin:$(PATH)
 
 # === Tool Versions ===
 # .mise.toml is the single source of truth for maven, act, gitleaks, and trivy.
@@ -28,8 +28,8 @@ GJF_VERSION         := 1.35.0
 MERMAID_CLI_VERSION := 11.14.0
 
 # File-derived versions (source of truth = idiomatic dotfiles)
-NODE_VERSION := $(shell cat .nvmrc 2>/dev/null || echo 22)
-JAVA_VERSION := $(shell cat .java-version 2>/dev/null || echo 21)
+NODE_VERSION := $(shell cat .nvmrc 2>/dev/null || echo 24)
+JAVA_VERSION := $(shell cat .java-version 2>/dev/null || echo 25)
 
 # Derived paths
 GJF_JAR  := $(HOME)/.local/share/google-java-format-$(GJF_VERSION).jar
@@ -232,8 +232,24 @@ deps-prune: deps
 deps-prune-check: deps
 	@mvn -B test-compile dependency:analyze-only -DfailOnWarning=true -Ddependency-check.skip=true
 
-#static-check: @ Composite fast quality gate (format-check + lint + secrets + trivy-fs + mermaid-lint + deps-prune-check)
-static-check: format-check lint secrets trivy-fs mermaid-lint deps-prune-check
+#check-toolchain-alignment: @ Fail if the Java major disagrees across .java-version, .mise.toml, and pom.xml
+# Java is the insidious case: only the .mise.toml `java` pin is Renovate-tracked, so a
+# temurin major bump can leave .java-version + pom.xml behind while CI stays GREEN
+# (a newer JRE runs older --release bytecode fine). This guard fails fast on the split.
+check-toolchain-alignment:
+	@jv="$(JAVA_VERSION)"; \
+	mv=$$(awk -F'"' '/^java *=/ {print $$2}' .mise.toml | sed -E 's/^temurin-([0-9]+).*/\1/'); \
+	pv=$$(awk -F'[<>]' '/<maven.compiler.target>/ {print $$3}' pom.xml); \
+	if [ -z "$$jv" ] || [ -z "$$mv" ] || [ -z "$$pv" ]; then \
+		echo "check-toolchain-alignment: could not extract Java major (.java-version=$$jv .mise.toml=$$mv pom.xml=$$pv)"; exit 1; \
+	fi; \
+	if [ "$$jv" != "$$mv" ] || [ "$$jv" != "$$pv" ]; then \
+		echo "Java major mismatch: .java-version=$$jv .mise.toml=$$mv pom.xml=$$pv — bump all three together"; exit 1; \
+	fi; \
+	echo "Java toolchain aligned at major $$jv (.java-version, .mise.toml, pom.xml)"
+
+#static-check: @ Composite fast quality gate (toolchain-alignment + format-check + lint + secrets + trivy-fs + mermaid-lint + deps-prune-check)
+static-check: check-toolchain-alignment format-check lint secrets trivy-fs mermaid-lint deps-prune-check
 	@echo "=== static-check OK ==="
 
 #vulncheck: @ Alias for cve-check (canonical target name)
@@ -259,8 +275,10 @@ coverage-check: coverage-generate
 coverage-open:
 	@$(OPEN_CMD) ./target/site/jacoco/index.html
 
-#ci: @ Run full CI pipeline (static-check, test, integration-test, coverage-check, build)
-ci: deps static-check test integration-test coverage-check build
+#ci: @ Run full CI pipeline (static-check, integration-test, coverage-check, build)
+# coverage-check runs the full unit suite (via coverage-generate) and gates it at 70%,
+# so a separate `test` prerequisite would run the unit suite twice — omitted by design.
+ci: deps static-check integration-test coverage-check build
 	@echo "=== CI Complete ==="
 
 #ci-run: @ Run GitHub Actions workflow locally using act (jobs serialized)
@@ -355,7 +373,7 @@ renovate-validate: renovate-bootstrap
 
 .PHONY: help deps deps-maven deps-install deps-act deps-gitleaks deps-trivy deps-docker deps-check \
 	deps-prune deps-prune-check \
-	clean build test integration-test lint format format-check secrets trivy-fs mermaid-lint static-check \
+	clean build test integration-test lint format format-check secrets trivy-fs mermaid-lint check-toolchain-alignment static-check \
 	ci ci-run release vulncheck cve-check \
 	coverage-generate coverage-check coverage-open \
 	maven-settings-ossindex renovate-bootstrap renovate-validate
