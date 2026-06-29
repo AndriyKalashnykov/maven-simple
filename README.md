@@ -9,33 +9,33 @@ Side-by-side comparison of five Java HTTP clients (`HttpURLConnection`, `java.ne
 
 ```mermaid
 flowchart LR
-    App["Example main() classes<br/>Java 25"]
+    App["Example main() classes"]
     NEO[("NASA NEO API<br/>api.nasa.gov")]
 
-    subgraph HTTPC["HTTP Clients"]
+    subgraph HTTPC["HTTP Clients (shared request/response model)"]
         direction TB
         HC1["HttpURLConnection (JDK)"]
-        HC2["java.net.http.HttpClient (JDK 11+)"]
-        HC3["Apache HttpClient 5.6.1"]
-        HC4["OkHttp 5.3.2"]
-        HC5["Retrofit 3.0.0"]
+        HC2["java.net.http.HttpClient (JDK)"]
+        HC3["Apache HttpClient 5"]
+        HC4["OkHttp"]
+        HC5["Retrofit (+ Gson converter)"]
     end
 
-    subgraph JSONP["JSON Parsers"]
+    subgraph JSONP["JSON Parsing Approaches"]
         direction TB
-        JP1["Jackson 3.1.4 (tree + databind)"]
-        JP2["Gson 2.14.0 (tree + databind)"]
-        JP3["JsonPath 3.0.0"]
-        JP4["Jackson JsonPointer 3.1.4"]
+        JP1["Tree model<br/>Jackson JsonNode + Gson JsonElement"]
+        JP2["Simple data binding<br/>Jackson + Gson POJOs"]
+        JP3["Complex data binding<br/>generated full-schema POJOs"]
+        JP4["Path queries<br/>JsonPath + Jackson JsonPointer"]
     end
 
     App --> HTTPC
     HTTPC -->|"GET /neo/rest/v1/feed"| NEO
-    NEO -->|"JSON"| JSONP
+    NEO -->|"JSON response"| JSONP
     JSONP --> App
 ```
 
-Each `main()` class under `src/main/java/` issues the same `GET /neo/rest/v1/feed` request via one of the five HTTP clients, then deserializes the response via one of the four JSON-parsing approaches. The grid lets you compare ergonomics, dependency footprint, async support, and schema handling side-by-side against an unchanging upstream call. Container labels carry library versions so the diagram tracks the Tech Stack table below.
+Each `main()` class under `src/main/java/` issues the same `GET /neo/rest/v1/feed` request via one of the five HTTP clients (in `http/client/{java,apache,okhttp,retrofit}` over a shared `http/client/model`), then deserializes the response via one of the four JSON-parsing approaches (`jsonparse/{treemodels,databinding/simple,databinding/complex,pathqueries}`). The grid lets you compare ergonomics, dependency footprint, async support, and schema handling side-by-side against an unchanging upstream call. Library versions live in the Tech Stack table below — the diagram intentionally omits them so it never drifts from the build.
 
 ## Tech Stack
 
