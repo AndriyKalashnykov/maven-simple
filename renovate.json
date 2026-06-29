@@ -17,7 +17,7 @@
   ],
   "prConcurrentLimit": 50,
   "prHourlyLimit": 0,
-  "platformAutomerge": true,
+  "platformAutomerge": false,
   "automerge": true,
   "automergeType": "pr",
   "automergeStrategy": "squash",
@@ -83,7 +83,7 @@
       "groupName": "Jackson",
       "matchPackageNames": [
         "/^tools\\.jackson/",
-        "/^com\\.fasterxml\\.jackson\\.annotation/"
+        "com.fasterxml.jackson.core:jackson-annotations"
       ]
     },
     {
@@ -123,6 +123,23 @@
         "/^org\\.apache\\.maven\\.plugins/",
         "/^org\\.codehaus\\.mojo/"
       ]
+    },
+    {
+      "description": "Do not pin a digest on the MERMAID_CLI_VERSION docker tag tracked by custom.regex — config:best-practices' docker:pinDigests would otherwise create a pinDigest update that collides with (and silently drops) the version bump in the Makefile tool versions group.",
+      "matchManagers": [
+        "custom.regex"
+      ],
+      "matchDatasources": [
+        "docker"
+      ],
+      "pinDigests": false
+    },
+    {
+      "description": "Throttle the self-bumping renovate CLI pin (RENOVATE_VERSION) — renovate publishes to npm several times daily; without this the Makefile tool versions group churns near-daily.",
+      "matchDepNames": [
+        "renovate"
+      ],
+      "minimumReleaseAge": "7 days"
     }
   ]
 }
