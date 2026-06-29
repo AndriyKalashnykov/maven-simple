@@ -1,17 +1,32 @@
 package jsonparse.pathqueries;
 
-import java.io.IOException;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class JsonPathExampleTest {
-
-  protected static final Logger LOGGER = LoggerFactory.getLogger(JsonPathExampleTest.class);
+class JsonPathExampleTest {
 
   @Test
-  public void mainTest() throws IOException {
+  @DisplayName("JsonPath queries report NEO count and hazardous-asteroid count from source.json")
+  void queriesNeoCountAndHazardousCount() throws Exception {
+    String out = captureMain();
+    assertTrue(out.contains("NEO count: 101"), out);
+    assertTrue(out.contains("Potentially hazardous asteroids: 19"), out);
+  }
 
-    JsonPathExample.main(new String[] {});
+  private static String captureMain() throws Exception {
+    PrintStream original = System.out;
+    ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(buffer, true, StandardCharsets.UTF_8));
+    try {
+      JsonPathExample.main(new String[] {});
+    } finally {
+      System.setOut(original);
+    }
+    return buffer.toString(StandardCharsets.UTF_8);
   }
 }

@@ -15,14 +15,20 @@ public class OkHttpDemo {
 
   private static final ObjectMapper mapper = new ObjectMapper();
 
+  // Request target — defaults to the live demo API; overridable for offline tests
+  // via -DarticleUsersUrl=... or the ARTICLE_USERS_URL env var.
+  static final String ARTICLE_USERS_URL =
+      System.getProperty(
+          "articleUsersUrl",
+          System.getenv()
+              .getOrDefault(
+                  "ARTICLE_USERS_URL", "https://jsonmock.hackerrank.com/api/article_users?page=2"));
+
   public static void main(String[] args) throws IOException {
 
     OkHttpClient client = new OkHttpClient();
 
-    Request request =
-        new Request.Builder()
-            .url("https://jsonmock.hackerrank.com/api/article_users?page=2")
-            .build(); // defaults to GET
+    Request request = new Request.Builder().url(ARTICLE_USERS_URL).build(); // defaults to GET
 
     Response response = client.newCall(request).execute();
 

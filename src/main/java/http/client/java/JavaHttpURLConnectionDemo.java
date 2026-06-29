@@ -14,10 +14,19 @@ public class JavaHttpURLConnectionDemo {
 
   protected static final Logger LOGGER = LoggerFactory.getLogger(JavaHttpURLConnectionDemo.class);
 
+  // Request target — defaults to the live demo API; overridable for offline tests
+  // via -DarticleUsersUrl=... or the ARTICLE_USERS_URL env var.
+  static final String ARTICLE_USERS_URL =
+      System.getProperty(
+          "articleUsersUrl",
+          System.getenv()
+              .getOrDefault(
+                  "ARTICLE_USERS_URL", "https://jsonmock.hackerrank.com/api/article_users?page=2"));
+
   public static void main(String[] args) throws IOException {
 
     // Create a neat value object to hold the URL
-    URL url = URI.create("https://jsonmock.hackerrank.com/api/article_users?page=2").toURL();
+    URL url = URI.create(ARTICLE_USERS_URL).toURL();
 
     // Open a connection(?) on the URL(?) and cast the response(??)
     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
