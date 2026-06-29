@@ -5,14 +5,13 @@
 
 # Java HTTP Clients & JSON Parsing Reference
 
-Side-by-side comparison of five Java HTTP clients (`HttpURLConnection`, `java.net.http.HttpClient`, Apache HttpClient 5, OkHttp, Retrofit) and four JSON-parsing approaches (tree model, simple data binding, full-schema data binding, path queries). Every implementation calls NASA's Near-Earth Objects (NEO) API with the same request and asserts the same response, so library trade-offs — ergonomics, dependency footprint, async support, schema handling — are directly visible. It doubles as a build-tooling reference: a **JUnit 6 + WireMock** test pyramid, **gitleaks / Trivy / OWASP dependency-check** security gates, **JaCoCo** 70% coverage enforcement, and a **GitHub Actions** CI pipeline (locally replayable via `act`).
+Side-by-side comparison of five Java HTTP clients (`HttpURLConnection`, `java.net.http.HttpClient`, Apache HttpClient 5, OkHttp, Retrofit) and four JSON-parsing approaches (tree model, simple data binding, full-schema data binding, path queries) — **two independent demonstration tracks**. Each HTTP client issues the same `GET /api/article_users?page=2` request and parses it into a shared model, so client trade-offs (ergonomics, dependency footprint, async support) are directly comparable; each JSON-parsing demo processes the same bundled NASA Near-Earth Objects (NEO) feed snapshot, so parsing trade-offs (schema handling, query ergonomics) are directly comparable. It doubles as a build-tooling reference: a **JUnit 6 + WireMock** test pyramid, **gitleaks / Trivy / OWASP dependency-check** security gates, **JaCoCo** 70% coverage enforcement, and a **GitHub Actions** CI pipeline (locally replayable via `act`).
 
 ```mermaid
 flowchart LR
     App["Example main() classes"]
-    NEO[("NASA NEO API<br/>api.nasa.gov")]
 
-    subgraph HTTPC["HTTP Clients (shared request/response model)"]
+    subgraph HTTPC["HTTP Clients — fetch + parse into a shared Page/User model"]
         direction TB
         HC1["HttpURLConnection (JDK)"]
         HC2["java.net.http.HttpClient (JDK)"]
@@ -21,7 +20,9 @@ flowchart LR
         HC5["Retrofit (+ Gson converter)"]
     end
 
-    subgraph JSONP["JSON Parsing Approaches"]
+    API[("Article-users API<br/>jsonmock.hackerrank.com")]
+
+    subgraph JSONP["JSON Parsing — four approaches over a bundled NEO feed"]
         direction TB
         JP1["Tree model<br/>Jackson JsonNode + Gson JsonElement"]
         JP2["Simple data binding<br/>Jackson + Gson POJOs"]
@@ -29,13 +30,15 @@ flowchart LR
         JP4["Path queries<br/>JsonPath + Jackson JsonPointer"]
     end
 
+    NEO["Bundled source.json<br/>(NASA NEO feed snapshot)"]
+
     App --> HTTPC
-    HTTPC -->|"GET /neo/rest/v1/feed"| NEO
-    NEO -->|"JSON response"| JSONP
-    JSONP --> App
+    HTTPC -->|"GET /api/article_users?page=2"| API
+    App --> JSONP
+    JSONP -->|"reads classpath resource"| NEO
 ```
 
-Each `main()` class under `src/main/java/` issues the same `GET /neo/rest/v1/feed` request via one of the five HTTP clients (in `http/client/{java,apache,okhttp,retrofit}` over a shared `http/client/model`), then deserializes the response via one of the four JSON-parsing approaches (`jsonparse/{treemodels,databinding/simple,databinding/complex,pathqueries}`). The grid lets you compare ergonomics, dependency footprint, async support, and schema handling side-by-side against an unchanging upstream call. Library versions live in the Tech Stack table below — the diagram intentionally omits them so it never drifts from the build.
+The two areas are **independent**. Each `main()` class under `http/client/{java,apache,okhttp,retrofit}` (over a shared `http/client/model`) issues `GET /api/article_users?page=2` against a public article-users API and parses the JSON into `Page`/`User`. Separately, each `main()` under `jsonparse/{treemodels,databinding/simple,databinding/complex,pathqueries}` parses the bundled `src/main/resources/source.json` (a NASA NEO feed snapshot) — no network call. Library versions live in the Tech Stack table below — the diagram intentionally omits them so it never drifts from the build.
 
 ## Tech Stack
 
