@@ -25,7 +25,7 @@ RENOVATE_VERSION    := 43.248.0
 # renovate: datasource=github-releases depName=google/google-java-format extractVersion=^v(?<version>.*)$
 GJF_VERSION         := 1.35.0
 # renovate: datasource=docker depName=minlag/mermaid-cli
-MERMAID_CLI_VERSION := 11.15.0
+MERMAID_CLI_VERSION := 11.16.0
 
 # File-derived versions (source of truth = idiomatic dotfiles)
 NODE_VERSION := $(shell cat .nvmrc 2>/dev/null || echo 24)
