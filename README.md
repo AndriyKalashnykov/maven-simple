@@ -5,7 +5,7 @@
 
 # Java HTTP Clients & JSON Parsing Reference
 
-Side-by-side comparison of five Java HTTP clients (`HttpURLConnection`, `java.net.http.HttpClient`, Apache HttpClient 5, OkHttp, Retrofit) and four JSON-parsing approaches (tree model, simple data binding, full-schema data binding, path queries) — **two independent demonstration tracks**. Each HTTP client issues the same `GET /api/article_users?page=2` request and parses it into a shared model, so client trade-offs (ergonomics, dependency footprint, async support) are directly comparable; each JSON-parsing demo processes the same bundled NASA Near-Earth Objects (NEO) feed snapshot, so parsing trade-offs (schema handling, query ergonomics) are directly comparable. It doubles as a build-tooling reference: a **JUnit 6 + WireMock** test pyramid, **gitleaks / Trivy / OWASP dependency-check** security gates, **JaCoCo** 70% coverage enforcement, and a **GitHub Actions** CI pipeline (locally replayable via `act`).
+Side-by-side comparison of five Java HTTP clients (`HttpURLConnection`, `java.net.http.HttpClient`, Apache HttpClient 5, OkHttp, Retrofit) and four JSON-parsing approaches (tree model, simple data binding, full-schema data binding, path queries) — **two independent demonstration tracks**. Each HTTP client issues the same `GET /api/article_users?page=2` request and parses it into a shared model, so client trade-offs (ergonomics, dependency footprint, async support) are directly comparable; each JSON-parsing demo processes the same bundled NASA Near-Earth Objects (NEO) feed snapshot, so parsing trade-offs (schema handling, query ergonomics) are directly comparable. It doubles as a build-tooling reference: a **JUnit 6 + WireMock** test pyramid, **google-java-format / gitleaks / Trivy / OWASP dependency-check** quality + security gates, **JaCoCo** 70% coverage enforcement, and a **GitHub Actions** CI pipeline (locally replayable via `act`) on a **mise**-pinned toolchain with **Renovate**-managed dependencies.
 
 ```mermaid
 flowchart LR
@@ -168,7 +168,8 @@ Listed below; `make help` prints the same list.
 | `make secrets` | Scan repository for hardcoded secrets (gitleaks) |
 | `make trivy-fs` | Filesystem vulnerability/secret/misconfig scan |
 | `make mermaid-lint` | Validate Mermaid diagrams in Markdown (requires Docker) |
-| `make static-check` | Composite fast quality gate (format-check + lint + secrets + trivy-fs + mermaid-lint + deps-prune-check) |
+| `make check-toolchain-alignment` | Fail if the Java major disagrees across `.java-version`, `.mise.toml`, `pom.xml` |
+| `make static-check` | Composite fast quality gate (check-toolchain-alignment + format-check + lint + secrets + trivy-fs + mermaid-lint + deps-prune-check) |
 | `make cve-check` | Run OWASP dependency vulnerability scan |
 | `make vulncheck` | Alias for `cve-check` |
 
@@ -176,7 +177,7 @@ Listed below; `make help` prints the same list.
 
 | Target | Description |
 |--------|-------------|
-| `make ci` | Run full CI pipeline (static-check, test, coverage-check, build) |
+| `make ci` | Run full CI pipeline (static-check, integration-test, coverage-check, build) |
 | `make ci-run` | Run GitHub Actions workflow locally using [act](https://github.com/nektos/act) |
 
 ### Dependencies
