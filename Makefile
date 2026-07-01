@@ -318,6 +318,8 @@ release: deps
 	@if ! echo "$(VERSION)" | grep -qE '$(SEMVER_RE)'; then \
 		echo "Error: VERSION must be valid semver (e.g., 1.0.0 → creates tag v1.0.0)"; exit 1; \
 	fi
+	@if git rev-parse -q --verify "refs/tags/v$(VERSION)" >/dev/null 2>&1; then echo "ERROR: tag v$(VERSION) already exists locally. Pick a new version or delete it: git tag -d v$(VERSION)"; exit 1; fi
+	@if git ls-remote --exit-code --tags origin "refs/tags/v$(VERSION)" >/dev/null 2>&1; then echo "ERROR: tag v$(VERSION) already exists on origin. Pick a new version."; exit 1; fi
 	@echo "Releasing version $(VERSION) (current: $(CURRENTTAG))..."
 	@echo -n "Proceed? [y/N] " && read ans && [ "$${ans:-N}" = y ] || { echo "Aborted."; exit 1; }
 	@mvn -B versions:set -DnewVersion=$(VERSION) -DgenerateBackupPoms=false
