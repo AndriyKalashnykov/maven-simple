@@ -91,14 +91,14 @@
         <dependency>
             <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>3.2.0</version>
+            <version>3.2.1</version>
         </dependency>
 
         <!-- Declared directly: tree-model code references jackson-core types (transitive of jackson-databind) -->
         <dependency>
             <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <version>3.2.0</version>
+            <version>3.2.1</version>
         </dependency>
 
         <!-- Jackson 3.x reuses the legacy 2.x annotations coordinate (com.fasterxml.jackson.annotation.*).
