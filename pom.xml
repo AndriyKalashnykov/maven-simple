@@ -251,7 +251,7 @@
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
                 <!-- https://dependency-check.github.io/DependencyCheck/dependency-check-maven/ -->
-                <version>12.2.2</version>
+                <version>13.0.0</version>
                 <configuration>
                     <ossIndexServerId>ossindex</ossIndexServerId>
                 </configuration>
