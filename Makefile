@@ -21,9 +21,9 @@ TRIVY_VERSION    := $(shell awk -F'"' '/^"aqua:aquasecurity\/trivy" *=/ {print $
 # Renovate: track npm publishes (lag ~8 patches behind GitHub releases — npm
 # is what `npx renovate@$(VERSION)` resolves; GitHub-tag pins break validate).
 # renovate: datasource=npm depName=renovate
-RENOVATE_VERSION    := 44.106.0
+RENOVATE_VERSION    := 44.112.3
 # renovate: datasource=github-releases depName=google/google-java-format extractVersion=^v(?<version>.*)$
-GJF_VERSION         := 1.36.1
+GJF_VERSION         := 1.37.0
 # renovate: datasource=docker depName=minlag/mermaid-cli
 MERMAID_CLI_VERSION := 12.0.1
 
