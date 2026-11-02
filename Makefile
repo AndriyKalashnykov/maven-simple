@@ -23,7 +23,7 @@ TRIVY_VERSION    := $(shell awk -F'"' '/^"aqua:aquasecurity\/trivy" *=/ {print $
 # renovate: datasource=npm depName=renovate
 RENOVATE_VERSION    := 44.181.6
 # renovate: datasource=github-releases depName=google/google-java-format extractVersion=^v(?<version>.*)$
-GJF_VERSION         := 1.37.0
+GJF_VERSION         := 2.0.0
 # renovate: datasource=docker depName=minlag/mermaid-cli
 MERMAID_CLI_VERSION := 12.0.1
 
