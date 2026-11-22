@@ -2,7 +2,7 @@
 # renovate: datasource=adoptium-java depName=java
 java = "temurin-25.0.3+9.0.LTS"
 # renovate: datasource=maven depName=org.apache.maven:apache-maven
-maven = "3.10.1"
+maven = "3.10.2"
 # renovate: datasource=github-releases depName=nektos/act extractVersion=^v(?<version>.*)$
 "aqua:nektos/act" = "0.2.98"
 # renovate: datasource=github-releases depName=gitleaks/gitleaks extractVersion=^v(?<version>.*)$
